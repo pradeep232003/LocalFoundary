@@ -1,0 +1,944 @@
+{
+  "note": "Known accessibility findings. New findings outside this list fail the capture. Shrink this file deliberately; regenerate with node scripts/capture-ui.mjs --a11y-baseline.",
+  "updated_at": "2026-09-24T07:55:01.383Z",
+  "accepted": [
+    "01-welcome | color-contrast | .section-label",
+    "01-welcome | color-contrast | .section-label > span",
+    "01-welcome | color-contrast | .sidebar-empty",
+    "01-welcome | color-contrast | span:nth-child(2) > small",
+    "02-new-project | color-contrast | .section-label",
+    "02-new-project | color-contrast | .section-label > span",
+    "02-new-project | color-contrast | .sidebar-empty",
+    "02-new-project | color-contrast | span:nth-child(2) > small",
+    "03-project-preview | color-contrast | .section-label",
+    "03-project-preview | color-contrast | .section-label > span",
+    "03-project-preview | color-contrast | .sidebar-bottom > p",
+    "03-project-preview | color-contrast | span:nth-child(2) > small",
+    "04-build-limits | color-contrast | .section-label",
+    "04-build-limits | color-contrast | .section-label > span",
+    "04-build-limits | color-contrast | .sidebar-bottom > p",
+    "04-build-limits | color-contrast | span:nth-child(2) > small",
+    "05-code | color-contrast | .section-label",
+    "05-code | color-contrast | .section-label > span",
+    "05-code | color-contrast | .sidebar-bottom > p",
+    "05-code | color-contrast | span:nth-child(2) > small",
+    "06-logs | color-contrast | .section-label",
+    "06-logs | color-contrast | .section-label > span",
+    "06-logs | color-contrast | .sidebar-bottom > p",
+    "06-logs | color-contrast | span:nth-child(2) > small",
+    "07-versions | color-contrast | .section-label",
+    "07-versions | color-contrast | .section-label > span",
+    "07-versions | color-contrast | .sidebar-bottom > p",
+    "07-versions | color-contrast | span:nth-child(2) > small",
+    "08-source-restore | color-contrast | .section-label",
+    "08-source-restore | color-contrast | .section-label > span",
+    "08-source-restore | color-contrast | .sidebar-bottom > p",
+    "08-source-restore | color-contrast | span:nth-child(2) > small",
+    "09-data-safety | color-contrast | .section-label",
+    "09-data-safety | color-contrast | .section-label > span",
+    "09-data-safety | color-contrast | .sidebar-bottom > p",
+    "09-data-safety | color-contrast | span:nth-child(2) > small",
+    "10-database-restore | color-contrast | .section-label",
+    "10-database-restore | color-contrast | .section-label > span",
+    "10-database-restore | color-contrast | .sidebar-bottom > p",
+    "10-database-restore | color-contrast | span:nth-child(2) > small",
+    "11-github-review | color-contrast | .section-label",
+    "11-github-review | color-contrast | .section-label > span",
+    "11-github-review | color-contrast | .sidebar-bottom > p",
+    "11-github-review | color-contrast | span:nth-child(2) > small",
+    "12-github-diff | color-contrast | .section-label",
+    "12-github-diff | color-contrast | .section-label > span",
+    "12-github-diff | color-contrast | .sidebar-bottom > p",
+    "12-github-diff | color-contrast | span:nth-child(2) > small",
+    "13-build-activity | color-contrast | .section-label",
+    "13-build-activity | color-contrast | .section-label > span",
+    "13-build-activity | color-contrast | .sidebar-bottom > p",
+    "13-build-activity | color-contrast | span:nth-child(2) > small",
+    "14-offline-local-ai | color-contrast | .section-label",
+    "14-offline-local-ai | color-contrast | .section-label > span",
+    "14-offline-local-ai | color-contrast | .sidebar-bottom > p",
+    "14-offline-local-ai | color-contrast | span:nth-child(2) > small",
+    "15-document-search | color-contrast | .section-label",
+    "15-document-search | color-contrast | .section-label > span",
+    "15-document-search | color-contrast | .sidebar-bottom > p",
+    "15-document-search | color-contrast | span:nth-child(2) > small",
+    "16-file-automation | color-contrast | .section-label",
+    "16-file-automation | color-contrast | .section-label > span",
+    "16-file-automation | color-contrast | .sidebar-bottom > p",
+    "16-file-automation | color-contrast | span:nth-child(2) > small",
+    "17-recovery | color-contrast | .section-label",
+    "17-recovery | color-contrast | .section-label > span",
+    "17-recovery | color-contrast | .sidebar-bottom > p",
+    "17-recovery | color-contrast | span:nth-child(2) > small",
+    "18-recovery-export | color-contrast | .section-label",
+    "18-recovery-export | color-contrast | .section-label > span",
+    "18-recovery-export | color-contrast | .sidebar-bottom > p",
+    "18-recovery-export | color-contrast | span:nth-child(2) > small",
+    "19-recovery-import | color-contrast | .section-label",
+    "19-recovery-import | color-contrast | .section-label > span",
+    "19-recovery-import | color-contrast | .sidebar-bottom > p",
+    "19-recovery-import | color-contrast | span:nth-child(2) > small",
+    "20-diagnostics | color-contrast | .section-label",
+    "20-diagnostics | color-contrast | .section-label > span",
+    "20-diagnostics | color-contrast | .sidebar-bottom > p",
+    "20-diagnostics | color-contrast | span:nth-child(2) > small",
+    "20-diagnostics | scrollable-region-focusable | .diagnostic-list",
+    "21-mobile-preview | color-contrast | .preview-facts > span:nth-child(1)",
+    "21-mobile-preview | color-contrast | .preview-facts > span:nth-child(2)",
+    "21-mobile-preview | color-contrast | .tiny-label",
+    "21-mobile-preview | scrollable-region-focusable | .conversation",
+    "22-build-controls | color-contrast | .section-label",
+    "22-build-controls | color-contrast | .section-label > span",
+    "22-build-controls | color-contrast | .sidebar-bottom > p",
+    "22-build-controls | color-contrast | a > span:nth-child(2) > small",
+    "23-package-approval | color-contrast | .section-label",
+    "23-package-approval | color-contrast | .section-label > span",
+    "23-package-approval | color-contrast | .sidebar-bottom > p",
+    "23-package-approval | color-contrast | a > span:nth-child(2) > small",
+    "24-browser-checks | color-contrast | .section-label",
+    "24-browser-checks | color-contrast | .section-label > span",
+    "24-browser-checks | color-contrast | .sidebar-bottom > p",
+    "24-browser-checks | color-contrast | span:nth-child(2) > small",
+    "25-release-review | color-contrast | .section-label",
+    "25-release-review | color-contrast | .section-label > span",
+    "25-release-review | color-contrast | .sidebar-bottom > p",
+    "25-release-review | color-contrast | a > span:nth-child(2) > small",
+    "26-project-context | color-contrast | .section-label",
+    "26-project-context | color-contrast | .section-label > span",
+    "26-project-context | color-contrast | .sidebar-bottom > p",
+    "26-project-context | color-contrast | span:nth-child(2) > small",
+    "27-feature-roadmap | color-contrast | .section-label",
+    "27-feature-roadmap | color-contrast | .section-label > span",
+    "27-feature-roadmap | color-contrast | .sidebar-bottom > p",
+    "27-feature-roadmap | color-contrast | span:nth-child(2) > small",
+    "28-mobile-build-details | color-contrast | .section-label",
+    "28-mobile-build-details | color-contrast | .section-label > span",
+    "28-mobile-build-details | color-contrast | .sidebar-bottom > p",
+    "28-mobile-build-details | color-contrast | a > span:nth-child(2) > small",
+    "29-mobile-build-downloads | color-contrast | .section-label",
+    "29-mobile-build-downloads | color-contrast | .section-label > span",
+    "29-mobile-build-downloads | color-contrast | .sidebar-bottom > p",
+    "29-mobile-build-downloads | color-contrast | a > span:nth-child(2) > small"
+  ],
+  "detail": [
+    {
+      "state": "01-welcome",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".section-label",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.47 (foreground color: #718475, background color: #121915, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "01-welcome",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".section-label > span",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.47 (foreground color: #718475, background color: #121915, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "01-welcome",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".sidebar-empty",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.32 (foreground color: #708175, background color: #121915, font size: 8.3pt (11px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "01-welcome",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "span:nth-child(2) > small",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.46 (foreground color: #738378, background color: #121915, font size: 5.3pt (7px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "02-new-project",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".section-label",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.47 (foreground color: #718475, background color: #121915, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "02-new-project",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".section-label > span",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.47 (foreground color: #718475, background color: #121915, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "02-new-project",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".sidebar-empty",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.32 (foreground color: #708175, background color: #121915, font size: 8.3pt (11px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "02-new-project",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "span:nth-child(2) > small",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.46 (foreground color: #738378, background color: #121915, font size: 5.3pt (7px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "03-project-preview",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".section-label",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.47 (foreground color: #718475, background color: #121915, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "03-project-preview",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".section-label > span",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.47 (foreground color: #718475, background color: #121915, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "03-project-preview",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".sidebar-bottom > p",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.33 (foreground color: #718175, background color: #121915, font size: 7.5pt (10px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "03-project-preview",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "span:nth-child(2) > small",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.46 (foreground color: #738378, background color: #121915, font size: 5.3pt (7px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "04-build-limits",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".section-label",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.47 (foreground color: #718475, background color: #121915, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "04-build-limits",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".section-label > span",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.47 (foreground color: #718475, background color: #121915, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "04-build-limits",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".sidebar-bottom > p",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.33 (foreground color: #718175, background color: #121915, font size: 7.5pt (10px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "04-build-limits",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "span:nth-child(2) > small",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.46 (foreground color: #738378, background color: #121915, font size: 5.3pt (7px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "05-code",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".section-label",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.47 (foreground color: #718475, background color: #121915, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "05-code",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".section-label > span",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.47 (foreground color: #718475, background color: #121915, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "05-code",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".sidebar-bottom > p",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.33 (foreground color: #718175, background color: #121915, font size: 7.5pt (10px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "05-code",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "span:nth-child(2) > small",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.46 (foreground color: #738378, background color: #121915, font size: 5.3pt (7px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "06-logs",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".section-label",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.47 (foreground color: #718475, background color: #121915, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "06-logs",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".section-label > span",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.47 (foreground color: #718475, background color: #121915, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "06-logs",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".sidebar-bottom > p",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.33 (foreground color: #718175, background color: #121915, font size: 7.5pt (10px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "06-logs",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "span:nth-child(2) > small",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.46 (foreground color: #738378, background color: #121915, font size: 5.3pt (7px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "07-versions",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".section-label",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.47 (foreground color: #718475, background color: #121915, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "07-versions",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".section-label > span",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.47 (foreground color: #718475, background color: #121915, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "07-versions",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".sidebar-bottom > p",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.33 (foreground color: #718175, background color: #121915, font size: 7.5pt (10px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "07-versions",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "span:nth-child(2) > small",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.46 (foreground color: #738378, background color: #121915, font size: 5.3pt (7px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "08-source-restore",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".section-label",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.47 (foreground color: #718475, background color: #121915, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "08-source-restore",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".section-label > span",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.47 (foreground color: #718475, background color: #121915, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "08-source-restore",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".sidebar-bottom > p",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.33 (foreground color: #718175, background color: #121915, font size: 7.5pt (10px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "08-source-restore",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "span:nth-child(2) > small",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.46 (foreground color: #738378, background color: #121915, font size: 5.3pt (7px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "09-data-safety",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".section-label",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.47 (foreground color: #718475, background color: #121915, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "09-data-safety",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".section-label > span",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.47 (foreground color: #718475, background color: #121915, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "09-data-safety",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".sidebar-bottom > p",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.33 (foreground color: #718175, background color: #121915, font size: 7.5pt (10px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "09-data-safety",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "span:nth-child(2) > small",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.46 (foreground color: #738378, background color: #121915, font size: 5.3pt (7px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "10-database-restore",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".section-label",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.47 (foreground color: #718475, background color: #121915, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "10-database-restore",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".section-label > span",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.47 (foreground color: #718475, background color: #121915, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "10-database-restore",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".sidebar-bottom > p",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.33 (foreground color: #718175, background color: #121915, font size: 7.5pt (10px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "10-database-restore",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "span:nth-child(2) > small",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.46 (foreground color: #738378, background color: #121915, font size: 5.3pt (7px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "11-github-review",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".section-label",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.47 (foreground color: #718475, background color: #121915, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "11-github-review",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".section-label > span",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.47 (foreground color: #718475, background color: #121915, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "11-github-review",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".sidebar-bottom > p",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.33 (foreground color: #718175, background color: #121915, font size: 7.5pt (10px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "11-github-review",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "span:nth-child(2) > small",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.46 (foreground color: #738378, background color: #121915, font size: 5.3pt (7px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "12-github-diff",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".section-label",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.47 (foreground color: #718475, background color: #121915, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "12-github-diff",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".section-label > span",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.47 (foreground color: #718475, background color: #121915, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "12-github-diff",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".sidebar-bottom > p",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.33 (foreground color: #718175, background color: #121915, font size: 7.5pt (10px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "12-github-diff",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "span:nth-child(2) > small",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.46 (foreground color: #738378, background color: #121915, font size: 5.3pt (7px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "13-build-activity",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".section-label",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.47 (foreground color: #718475, background color: #121915, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "13-build-activity",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".section-label > span",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.47 (foreground color: #718475, background color: #121915, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "13-build-activity",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".sidebar-bottom > p",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.33 (foreground color: #718175, background color: #121915, font size: 7.5pt (10px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "13-build-activity",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "span:nth-child(2) > small",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.46 (foreground color: #738378, background color: #121915, font size: 5.3pt (7px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "14-offline-local-ai",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".section-label",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.47 (foreground color: #718475, background color: #121915, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "14-offline-local-ai",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".section-label > span",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.47 (foreground color: #718475, background color: #121915, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "14-offline-local-ai",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".sidebar-bottom > p",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.33 (foreground color: #718175, background color: #121915, font size: 7.5pt (10px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "14-offline-local-ai",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "span:nth-child(2) > small",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.46 (foreground color: #738378, background color: #121915, font size: 5.3pt (7px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "15-document-search",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".section-label",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.47 (foreground color: #718475, background color: #121915, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "15-document-search",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".section-label > span",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.47 (foreground color: #718475, background color: #121915, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "15-document-search",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".sidebar-bottom > p",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.33 (foreground color: #718175, background color: #121915, font size: 7.5pt (10px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "15-document-search",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "span:nth-child(2) > small",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.46 (foreground color: #738378, background color: #121915, font size: 5.3pt (7px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "16-file-automation",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".section-label",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.47 (foreground color: #718475, background color: #121915, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "16-file-automation",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".section-label > span",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.47 (foreground color: #718475, background color: #121915, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "16-file-automation",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".sidebar-bottom > p",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.33 (foreground color: #718175, background color: #121915, font size: 7.5pt (10px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "16-file-automation",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "span:nth-child(2) > small",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.46 (foreground color: #738378, background color: #121915, font size: 5.3pt (7px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "17-recovery",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".section-label",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.47 (foreground color: #718475, background color: #121915, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "17-recovery",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".section-label > span",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.47 (foreground color: #718475, background color: #121915, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "17-recovery",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".sidebar-bottom > p",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.33 (foreground color: #718175, background color: #121915, font size: 7.5pt (10px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "17-recovery",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "span:nth-child(2) > small",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.46 (foreground color: #738378, background color: #121915, font size: 5.3pt (7px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "18-recovery-export",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".section-label",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.47 (foreground color: #718475, background color: #121915, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "18-recovery-export",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".section-label > span",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.47 (foreground color: #718475, background color: #121915, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "18-recovery-export",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".sidebar-bottom > p",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.33 (foreground color: #718175, background color: #121915, font size: 7.5pt (10px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "18-recovery-export",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "span:nth-child(2) > small",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.46 (foreground color: #738378, background color: #121915, font size: 5.3pt (7px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "19-recovery-import",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".section-label",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.47 (foreground color: #718475, background color: #121915, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "19-recovery-import",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".section-label > span",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.47 (foreground color: #718475, background color: #121915, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "19-recovery-import",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".sidebar-bottom > p",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.33 (foreground color: #718175, background color: #121915, font size: 7.5pt (10px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "19-recovery-import",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "span:nth-child(2) > small",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.46 (foreground color: #738378, background color: #121915, font size: 5.3pt (7px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "20-diagnostics",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".section-label",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.47 (foreground color: #718475, background color: #121915, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "20-diagnostics",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".section-label > span",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.47 (foreground color: #718475, background color: #121915, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "20-diagnostics",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".sidebar-bottom > p",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.33 (foreground color: #718175, background color: #121915, font size: 7.5pt (10px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "20-diagnostics",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "span:nth-child(2) > small",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.46 (foreground color: #738378, background color: #121915, font size: 5.3pt (7px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "20-diagnostics",
+      "rule": "scrollable-region-focusable",
+      "impact": "serious",
+      "target": ".diagnostic-list",
+      "summary": "Fix any of the following:   Element should have focusable content   Element should be focusable"
+    },
+    {
+      "state": "21-mobile-preview",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".preview-facts > span:nth-child(1)",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.32 (foreground color: #688163, background color: #0f1511, font size: 6.0pt (8px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "21-mobile-preview",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".preview-facts > span:nth-child(2)",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.32 (foreground color: #688163, background color: #0f1511, font size: 6.0pt (8px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "21-mobile-preview",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".tiny-label",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 3.76 (foreground color: #657b69, background color: #151d18, font size: 6.0pt (8px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "21-mobile-preview",
+      "rule": "scrollable-region-focusable",
+      "impact": "serious",
+      "target": ".conversation",
+      "summary": "Fix any of the following:   Element should have focusable content   Element should be focusable"
+    },
+    {
+      "state": "22-build-controls",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".section-label",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.47 (foreground color: #718475, background color: #121915, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "22-build-controls",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".section-label > span",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.47 (foreground color: #718475, background color: #121915, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "22-build-controls",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".sidebar-bottom > p",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.33 (foreground color: #718175, background color: #121915, font size: 7.5pt (10px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "22-build-controls",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "a > span:nth-child(2) > small",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.46 (foreground color: #738378, background color: #121915, font size: 5.3pt (7px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "23-package-approval",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".section-label",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.47 (foreground color: #718475, background color: #121915, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "23-package-approval",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".section-label > span",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.47 (foreground color: #718475, background color: #121915, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "23-package-approval",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".sidebar-bottom > p",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.33 (foreground color: #718175, background color: #121915, font size: 7.5pt (10px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "23-package-approval",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "a > span:nth-child(2) > small",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.46 (foreground color: #738378, background color: #121915, font size: 5.3pt (7px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "24-browser-checks",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".section-label",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.47 (foreground color: #718475, background color: #121915, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "24-browser-checks",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".section-label > span",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.47 (foreground color: #718475, background color: #121915, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "24-browser-checks",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".sidebar-bottom > p",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.33 (foreground color: #718175, background color: #121915, font size: 7.5pt (10px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "24-browser-checks",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "span:nth-child(2) > small",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.46 (foreground color: #738378, background color: #121915, font size: 5.3pt (7px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "25-release-review",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".section-label",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.47 (foreground color: #718475, background color: #121915, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "25-release-review",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".section-label > span",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.47 (foreground color: #718475, background color: #121915, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "25-release-review",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".sidebar-bottom > p",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.33 (foreground color: #718175, background color: #121915, font size: 7.5pt (10px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "25-release-review",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "a > span:nth-child(2) > small",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.46 (foreground color: #738378, background color: #121915, font size: 5.3pt (7px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "26-project-context",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".section-label",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.47 (foreground color: #718475, background color: #121915, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "26-project-context",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".section-label > span",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.47 (foreground color: #718475, background color: #121915, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "26-project-context",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".sidebar-bottom > p",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.33 (foreground color: #718175, background color: #121915, font size: 7.5pt (10px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "26-project-context",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "span:nth-child(2) > small",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.46 (foreground color: #738378, background color: #121915, font size: 5.3pt (7px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "27-feature-roadmap",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".section-label",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.47 (foreground color: #718475, background color: #121915, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "27-feature-roadmap",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".section-label > span",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.47 (foreground color: #718475, background color: #121915, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "27-feature-roadmap",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".sidebar-bottom > p",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.33 (foreground color: #718175, background color: #121915, font size: 7.5pt (10px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "27-feature-roadmap",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "span:nth-child(2) > small",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.46 (foreground color: #738378, background color: #121915, font size: 5.3pt (7px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "28-mobile-build-details",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".section-label",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.47 (foreground color: #718475, background color: #121915, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "28-mobile-build-details",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".section-label > span",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.47 (foreground color: #718475, background color: #121915, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "28-mobile-build-details",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".sidebar-bottom > p",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.33 (foreground color: #718175, background color: #121915, font size: 7.5pt (10px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "28-mobile-build-details",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "a > span:nth-child(2) > small",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.46 (foreground color: #738378, background color: #121915, font size: 5.3pt (7px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "29-mobile-build-downloads",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".section-label",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.47 (foreground color: #718475, background color: #121915, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "29-mobile-build-downloads",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".section-label > span",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.47 (foreground color: #718475, background color: #121915, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "29-mobile-build-downloads",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".sidebar-bottom > p",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.33 (foreground color: #718175, background color: #121915, font size: 7.5pt (10px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "29-mobile-build-downloads",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "a > span:nth-child(2) > small",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.46 (foreground color: #738378, background color: #121915, font size: 5.3pt (7px), font weight: normal). Expected contrast ratio of 4.5:1"
+    }
+  ]
+}

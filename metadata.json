@@ -1,0 +1,6 @@
+{
+  "name": "Local Foundry",
+  "description": "A personal app builder and workbench to design, generate, preview, and manage web applications and release artifacts.",
+  "permissions": [],
+  "capabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

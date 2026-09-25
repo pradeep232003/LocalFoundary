@@ -1,0 +1,512 @@
+{
+  "note": "Known accessibility findings. New findings outside this list fail the capture. Shrink this file deliberately; regenerate with node scripts/capture-ui.mjs --a11y-baseline.",
+  "updated_at": "2026-09-21T09:33:48.973Z",
+  "accepted": [
+    "01-sign-in | color-contrast | .auth-story > div > .eyebrow",
+    "01-sign-in | color-contrast | .auth-story > div > p",
+    "01-sign-in | color-contrast | a > span",
+    "01-sign-in | color-contrast | article:nth-child(1) > span",
+    "02-registration | color-contrast | .auth-story > div > .eyebrow",
+    "02-registration | color-contrast | .auth-story > div > p",
+    "02-registration | color-contrast | a > span",
+    "02-registration | color-contrast | article:nth-child(1) > span",
+    "03-request-reset | color-contrast | .auth-story > div > .eyebrow",
+    "03-request-reset | color-contrast | .auth-story > div > p",
+    "03-request-reset | color-contrast | a > span",
+    "03-request-reset | color-contrast | article:nth-child(1) > span",
+    "04-new-password | color-contrast | .auth-story > div > .eyebrow",
+    "04-new-password | color-contrast | .auth-story > div > p",
+    "04-new-password | color-contrast | a > span",
+    "04-new-password | color-contrast | article:nth-child(1) > span",
+    "05-verify-email | color-contrast | .auth-story > div > .eyebrow",
+    "05-verify-email | color-contrast | .auth-story > div > p",
+    "05-verify-email | color-contrast | a > span",
+    "05-verify-email | color-contrast | article:nth-child(1) > span",
+    "06-private-workspace | color-contrast | .workspace-label > div > small",
+    "06-private-workspace | color-contrast | button:nth-child(4)",
+    "06-private-workspace | color-contrast | nav > button:nth-child(2)",
+    "06-private-workspace | color-contrast | nav > button:nth-child(3)",
+    "07-billing | color-contrast | .workspace-label > div > small",
+    "07-billing | color-contrast | button:nth-child(1)",
+    "07-billing | color-contrast | nav > button:nth-child(3)",
+    "07-billing | color-contrast | nav > button:nth-child(4)",
+    "08-payments-disabled | color-contrast | .workspace-label > div > small",
+    "08-payments-disabled | color-contrast | button:nth-child(1)",
+    "08-payments-disabled | color-contrast | nav > button:nth-child(3)",
+    "08-payments-disabled | color-contrast | nav > button:nth-child(4)",
+    "09-people-roles | color-contrast | .workspace-label > div > small",
+    "09-people-roles | color-contrast | button:nth-child(4)",
+    "09-people-roles | color-contrast | nav > button:nth-child(1)",
+    "09-people-roles | color-contrast | nav > button:nth-child(2)",
+    "10-operations | color-contrast | .workspace-label > div > small",
+    "10-operations | color-contrast | nav > button:nth-child(1)",
+    "10-operations | color-contrast | nav > button:nth-child(2)",
+    "10-operations | color-contrast | nav > button:nth-child(3)",
+    "11-audit-alerts | color-contrast | .workspace-label > div > small",
+    "11-audit-alerts | color-contrast | nav > button:nth-child(1)",
+    "11-audit-alerts | color-contrast | nav > button:nth-child(2)",
+    "11-audit-alerts | color-contrast | nav > button:nth-child(3)",
+    "12-viewer-role | color-contrast | .account > div:nth-child(2) > small",
+    "12-viewer-role | color-contrast | .eyebrow",
+    "12-viewer-role | color-contrast | .workspace-label > div > small",
+    "12-viewer-role | color-contrast | nav > button:nth-child(2)",
+    "13-empty-workspace | color-contrast | .workspace-label > div > small",
+    "13-empty-workspace | color-contrast | button:nth-child(4)",
+    "13-empty-workspace | color-contrast | nav > button:nth-child(2)",
+    "13-empty-workspace | color-contrast | nav > button:nth-child(3)",
+    "14-mobile-workspace | color-contrast | .account > div:nth-child(2) > small",
+    "14-mobile-workspace | color-contrast | .eyebrow",
+    "14-mobile-workspace | color-contrast | nav > button:nth-child(2)",
+    "14-mobile-workspace | color-contrast | nav > button:nth-child(3)",
+    "15-mobile-people | color-contrast | .account > div:nth-child(2) > small",
+    "15-mobile-people | color-contrast | .eyebrow",
+    "15-mobile-people | color-contrast | nav > button:nth-child(1)",
+    "15-mobile-people | color-contrast | nav > button:nth-child(2)",
+    "16-mobile-sign-in | color-contrast | .auth-card > .eyebrow",
+    "16-mobile-sign-in | color-contrast | .auth-card > p",
+    "16-mobile-sign-in | color-contrast | a > span"
+  ],
+  "detail": [
+    {
+      "state": "01-sign-in",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".auth-story > div > .eyebrow",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 3.04 (foreground color: #798b7f, background color: #e7eee2, font size: 7.5pt (10px), font weight: bold). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "01-sign-in",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".auth-story > div > p",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.07 (foreground color: #667666, background color: #e7eee2, font size: 12.0pt (16px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "01-sign-in",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "a > span",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 2.59 (foreground color: #849889, background color: #e7eee2, font size: 8.3pt (11px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "01-sign-in",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "article:nth-child(1) > span",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 2.49 (foreground color: #8a9b82, background color: #e7eee2, font size: 18.0pt (24px), font weight: normal). Expected contrast ratio of 3:1"
+    },
+    {
+      "state": "02-registration",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".auth-story > div > .eyebrow",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 3.04 (foreground color: #798b7f, background color: #e7eee2, font size: 7.5pt (10px), font weight: bold). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "02-registration",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".auth-story > div > p",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.07 (foreground color: #667666, background color: #e7eee2, font size: 12.0pt (16px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "02-registration",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "a > span",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 2.59 (foreground color: #849889, background color: #e7eee2, font size: 8.3pt (11px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "02-registration",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "article:nth-child(1) > span",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 2.49 (foreground color: #8a9b82, background color: #e7eee2, font size: 18.0pt (24px), font weight: normal). Expected contrast ratio of 3:1"
+    },
+    {
+      "state": "03-request-reset",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".auth-story > div > .eyebrow",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 3.04 (foreground color: #798b7f, background color: #e7eee2, font size: 7.5pt (10px), font weight: bold). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "03-request-reset",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".auth-story > div > p",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.07 (foreground color: #667666, background color: #e7eee2, font size: 12.0pt (16px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "03-request-reset",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "a > span",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 2.59 (foreground color: #849889, background color: #e7eee2, font size: 8.3pt (11px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "03-request-reset",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "article:nth-child(1) > span",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 2.49 (foreground color: #8a9b82, background color: #e7eee2, font size: 18.0pt (24px), font weight: normal). Expected contrast ratio of 3:1"
+    },
+    {
+      "state": "04-new-password",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".auth-story > div > .eyebrow",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 3.04 (foreground color: #798b7f, background color: #e7eee2, font size: 7.5pt (10px), font weight: bold). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "04-new-password",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".auth-story > div > p",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.07 (foreground color: #667666, background color: #e7eee2, font size: 12.0pt (16px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "04-new-password",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "a > span",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 2.59 (foreground color: #849889, background color: #e7eee2, font size: 8.3pt (11px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "04-new-password",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "article:nth-child(1) > span",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 2.49 (foreground color: #8a9b82, background color: #e7eee2, font size: 18.0pt (24px), font weight: normal). Expected contrast ratio of 3:1"
+    },
+    {
+      "state": "05-verify-email",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".auth-story > div > .eyebrow",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 3.04 (foreground color: #798b7f, background color: #e7eee2, font size: 7.5pt (10px), font weight: bold). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "05-verify-email",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".auth-story > div > p",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 4.07 (foreground color: #667666, background color: #e7eee2, font size: 12.0pt (16px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "05-verify-email",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "a > span",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 2.59 (foreground color: #849889, background color: #e7eee2, font size: 8.3pt (11px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "05-verify-email",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "article:nth-child(1) > span",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 2.49 (foreground color: #8a9b82, background color: #e7eee2, font size: 18.0pt (24px), font weight: normal). Expected contrast ratio of 3:1"
+    },
+    {
+      "state": "06-private-workspace",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".workspace-label > div > small",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 2.69 (foreground color: #91a08f, background color: #fcfdfa, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "06-private-workspace",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "button:nth-child(4)",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 3.07 (foreground color: #8a948a, background color: #fcfdfa, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "06-private-workspace",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "nav > button:nth-child(2)",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 3.07 (foreground color: #8a948a, background color: #fcfdfa, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "06-private-workspace",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "nav > button:nth-child(3)",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 3.07 (foreground color: #8a948a, background color: #fcfdfa, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "07-billing",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".workspace-label > div > small",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 2.69 (foreground color: #91a08f, background color: #fcfdfa, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "07-billing",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "button:nth-child(1)",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 3.07 (foreground color: #8a948a, background color: #fcfdfa, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "07-billing",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "nav > button:nth-child(3)",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 3.07 (foreground color: #8a948a, background color: #fcfdfa, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "07-billing",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "nav > button:nth-child(4)",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 3.07 (foreground color: #8a948a, background color: #fcfdfa, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "08-payments-disabled",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".workspace-label > div > small",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 2.69 (foreground color: #91a08f, background color: #fcfdfa, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "08-payments-disabled",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "button:nth-child(1)",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 3.07 (foreground color: #8a948a, background color: #fcfdfa, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "08-payments-disabled",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "nav > button:nth-child(3)",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 3.07 (foreground color: #8a948a, background color: #fcfdfa, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "08-payments-disabled",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "nav > button:nth-child(4)",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 3.07 (foreground color: #8a948a, background color: #fcfdfa, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "09-people-roles",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".workspace-label > div > small",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 2.69 (foreground color: #91a08f, background color: #fcfdfa, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "09-people-roles",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "button:nth-child(4)",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 3.07 (foreground color: #8a948a, background color: #fcfdfa, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "09-people-roles",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "nav > button:nth-child(1)",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 3.07 (foreground color: #8a948a, background color: #fcfdfa, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "09-people-roles",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "nav > button:nth-child(2)",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 3.07 (foreground color: #8a948a, background color: #fcfdfa, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "10-operations",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".workspace-label > div > small",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 2.69 (foreground color: #91a08f, background color: #fcfdfa, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "10-operations",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "nav > button:nth-child(1)",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 3.07 (foreground color: #8a948a, background color: #fcfdfa, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "10-operations",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "nav > button:nth-child(2)",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 3.07 (foreground color: #8a948a, background color: #fcfdfa, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "10-operations",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "nav > button:nth-child(3)",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 3.07 (foreground color: #8a948a, background color: #fcfdfa, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "11-audit-alerts",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".workspace-label > div > small",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 2.69 (foreground color: #91a08f, background color: #fcfdfa, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "11-audit-alerts",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "nav > button:nth-child(1)",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 3.07 (foreground color: #8a948a, background color: #fcfdfa, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "11-audit-alerts",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "nav > button:nth-child(2)",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 3.07 (foreground color: #8a948a, background color: #fcfdfa, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "11-audit-alerts",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "nav > button:nth-child(3)",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 3.07 (foreground color: #8a948a, background color: #fcfdfa, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "12-viewer-role",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".account > div:nth-child(2) > small",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 2.7 (foreground color: #90a08e, background color: #fcfdfa, font size: 7.5pt (10px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "12-viewer-role",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".eyebrow",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 3.38 (foreground color: #798b7f, background color: #f7f8f5, font size: 6.8pt (9px), font weight: bold). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "12-viewer-role",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".workspace-label > div > small",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 2.69 (foreground color: #91a08f, background color: #fcfdfa, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "12-viewer-role",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "nav > button:nth-child(2)",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 3.07 (foreground color: #8a948a, background color: #fcfdfa, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "13-empty-workspace",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".workspace-label > div > small",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 2.69 (foreground color: #91a08f, background color: #fcfdfa, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "13-empty-workspace",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "button:nth-child(4)",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 3.07 (foreground color: #8a948a, background color: #fcfdfa, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "13-empty-workspace",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "nav > button:nth-child(2)",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 3.07 (foreground color: #8a948a, background color: #fcfdfa, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "13-empty-workspace",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "nav > button:nth-child(3)",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 3.07 (foreground color: #8a948a, background color: #fcfdfa, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "14-mobile-workspace",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".account > div:nth-child(2) > small",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 2.7 (foreground color: #90a08e, background color: #fcfdfa, font size: 7.5pt (10px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "14-mobile-workspace",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".eyebrow",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 3.38 (foreground color: #798b7f, background color: #f7f8f5, font size: 6.8pt (9px), font weight: bold). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "14-mobile-workspace",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "nav > button:nth-child(2)",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 3.07 (foreground color: #8a948a, background color: #fcfdfa, font size: 8.3pt (11px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "14-mobile-workspace",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "nav > button:nth-child(3)",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 3.07 (foreground color: #8a948a, background color: #fcfdfa, font size: 8.3pt (11px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "15-mobile-people",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".account > div:nth-child(2) > small",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 2.7 (foreground color: #90a08e, background color: #fcfdfa, font size: 7.5pt (10px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "15-mobile-people",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".eyebrow",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 3.38 (foreground color: #798b7f, background color: #f7f8f5, font size: 6.8pt (9px), font weight: bold). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "15-mobile-people",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "nav > button:nth-child(1)",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 3.07 (foreground color: #8a948a, background color: #fcfdfa, font size: 8.3pt (11px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "15-mobile-people",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "nav > button:nth-child(2)",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 3.07 (foreground color: #8a948a, background color: #fcfdfa, font size: 8.3pt (11px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "16-mobile-sign-in",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".auth-card > .eyebrow",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 3.51 (foreground color: #798b7f, background color: #fcfcfa, font size: 7.5pt (10px), font weight: bold). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "16-mobile-sign-in",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": ".auth-card > p",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 3.23 (foreground color: #849087, background color: #fcfcfa, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+      "state": "16-mobile-sign-in",
+      "rule": "color-contrast",
+      "impact": "serious",
+      "target": "a > span",
+      "summary": "Fix any of the following:   Element has insufficient color contrast of 2.59 (foreground color: #849889, background color: #e7eee2, font size: 8.3pt (11px), font weight: normal). Expected contrast ratio of 4.5:1"
+    }
+  ]
+}

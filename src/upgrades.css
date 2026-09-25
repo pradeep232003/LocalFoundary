@@ -1,0 +1,287 @@
+.build-settings-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0 23px 14px;
+  flex-shrink: 0;
+  font-size: 9px;
+  color: #82957c;
+}
+.build-settings-bar button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #b6cfa9;
+  background: none;
+  border: 0;
+  padding: 4px 0;
+  font-size: 10px;
+}
+.build-options select,
+.visual-form input,
+.visual-form select,
+.visual-form textarea {
+  display: block;
+  width: 100%;
+  border: 1px solid #3c5037;
+  background: #142019;
+  color: #d0e0c7;
+  border-radius: 6px;
+  padding: 11px;
+  font: inherit;
+  font-size: 12px;
+  box-sizing: border-box;
+}
+.build-options select {
+  margin-top: 9px;
+}
+.check-option {
+  display: flex !important;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 22px 0 !important;
+  text-transform: none;
+  font-size: 12px !important;
+  letter-spacing: 0 !important;
+  color: #b4caa8 !important;
+  line-height: 1.6;
+}
+.check-option input[type='checkbox'] {
+  width: 16px !important;
+  height: 16px;
+  margin: 3px 0 0 !important;
+  flex-shrink: 0;
+  accent-color: #acc68e;
+}
+.check-option small {
+  display: block;
+  font-size: 10px;
+  line-height: 1.7;
+  color: #8c9f84;
+  margin-top: 5px;
+}
+.upgrade-pane > p {
+  font-size: 12px;
+  line-height: 1.8;
+  color: #92a389;
+  margin-bottom: 25px;
+}
+.release-warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  border: 1px solid #475039;
+  background: #22291d;
+  border-radius: 9px;
+  padding: 16px;
+  margin: 22px 0;
+  color: #c1c49c;
+}
+.release-warning svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.release-warning p {
+  font-size: 11px;
+  line-height: 1.7;
+  margin: 0;
+}
+.upgrade-pane .plan-actions {
+  gap: 10px;
+}
+.upgrade-pane > .primary {
+  margin-top: 18px;
+}
+.visual-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin: 24px 0;
+}
+.visual-form label {
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: #9fb091;
+}
+.visual-form input,
+.visual-form select {
+  margin-top: 8px;
+  font-size: 12px;
+  letter-spacing: 0;
+}
+.visual-form details {
+  grid-column: 1/-1;
+  font-size: 11px;
+  color: #9eb292;
+}
+.visual-form details p {
+  font-size: 10px;
+  line-height: 1.7;
+}
+.visual-form textarea {
+  min-height: 85px;
+  font:
+    11px ui-monospace,
+    monospace;
+  resize: vertical;
+}
+.visual-form code {
+  display: block;
+  overflow-wrap: anywhere;
+  font-size: 9px;
+  margin-top: 7px;
+}
+.visual-form > .primary {
+  justify-self: start;
+  grid-column: 1/-1;
+}
+.evidence-tabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  margin: 24px 0 15px;
+}
+.evidence-tabs button {
+  border: 1px solid #354934;
+  border-radius: 6px;
+  background: #17251c;
+  color: #95ae89;
+  padding: 8px 10px;
+  font-size: 10px;
+  white-space: nowrap;
+}
+.evidence-tabs .selected {
+  background: #2b3c25;
+  color: #d5e3c6;
+}
+.browser-evidence {
+  display: block;
+  max-width: 100%;
+  max-height: 610px;
+  border: 1px solid #3c5037;
+  border-radius: 9px;
+  margin: auto;
+  object-fit: contain;
+}
+.evidence-detail {
+  font-size: 11px;
+  margin-top: 18px;
+  color: #b1c3a4;
+}
+.evidence-detail p {
+  color: #8e9f84;
+  line-height: 1.7;
+}
+.evidence-detail pre {
+  font-size: 10px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  background: #171b13;
+  border: 1px solid #4d4330;
+  padding: 12px;
+  border-radius: 5px;
+  color: #d3b690;
+}
+.release-steps {
+  display: grid;
+  gap: 18px;
+  margin: 28px 0;
+}
+.release-steps article {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+}
+.release-steps article > span {
+  font:
+    12px ui-monospace,
+    monospace;
+  color: #acc794;
+  padding: 9px;
+  border: 1px solid #3c5037;
+  border-radius: 6px;
+}
+.release-steps strong {
+  font-size: 12px;
+  color: #c1d2b5;
+}
+.release-steps p {
+  font-size: 11px;
+  color: #8fa387;
+  line-height: 1.8;
+  margin: 7px 0;
+}
+.release-steps button {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: #22331f;
+  border: 1px solid #40543b;
+  padding: 7px 10px;
+  border-radius: 5px;
+  color: #b6caa8;
+  font-size: 10px;
+}
+@media (max-width: 800px) {
+  .visual-form {
+    grid-template-columns: 1fr;
+  }
+  .build-settings-bar {
+    padding: 0 18px 12px;
+  }
+  .upgrade-pane {
+    padding: 24px 18px;
+  }
+}
+.continuity form {
+  display: grid;
+  gap: 16px;
+  margin: 20px 0;
+}
+.continuity label:not(.check-option) {
+  display: grid;
+  gap: 7px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.continuity textarea {
+  min-height: 84px;
+  width: 100%;
+  box-sizing: border-box;
+  resize: vertical;
+  padding: 12px;
+  /* This was background: var(--surface, #fff) with color: inherit. No --surface
+     is defined anywhere in the stylesheet, so saved context rendered as the
+     app's light text on a white box: about 1.2:1 contrast. These match the
+     .visual-form inputs. */
+  border: 1px solid #3c5037;
+  border-radius: 8px;
+  font: inherit;
+  background: #142019;
+  color: #d0e0c7;
+}
+.continuity textarea::placeholder {
+  color: #81937e;
+}
+.continuity fieldset {
+  border: 1px solid #3c5037;
+  border-radius: 10px;
+  padding: 16px;
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+.continuity pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 12px;
+}
+.continuity li {
+  margin-bottom: 16px;
+}
+.continuity summary {
+  cursor: pointer;
+  font-weight: 600;
+  padding: 12px 0;
+}
