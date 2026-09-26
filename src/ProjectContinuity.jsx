@@ -20,15 +20,24 @@ export default function ProjectContinuity({
   buildSettings,
   providerReady,
 }) {
-  const [body, setBody] = useState(project.context?.body || {});
+  const normalizeBody = (raw) => {
+    const b = { ...(raw || {}) };
+    if (!b.open_questions && b.questions) {
+      b.open_questions = b.questions;
+    }
+    return b;
+  };
+
+  const [body, setBody] = useState(() => normalizeBody(project.context?.body));
   const [revision, setRevision] = useState(project.context?.revision || 0);
+  const [savedNotice, setSavedNotice] = useState('');
   const [title, setTitle] = useState('');
   const [items, setItems] = useState([empty()]);
   const [reviewed, setReviewed] = useState({});
   useEffect(() => {
-    setBody(project.context?.body || {});
+    setBody(normalizeBody(project.context?.body));
     setRevision(project.context?.revision || 0);
-  }, [project.id, project.context?.revision]);
+  }, [project.id, project.context?.revision, project.context?.updated_at]);
   useEffect(() => {
     setReviewed({});
   }, [project.id, project.source_digest, project.feature_plans?.map(p => p.updated_at).join(',')]);
@@ -41,11 +50,19 @@ export default function ProjectContinuity({
           Saved context follows this project into future builds and encrypted recovery exports. Keep
           credentials in private settings.
         </p>
+        {savedNotice && (
+          <div className="notice-banner" style={{ margin: '12px 0' }}>
+            <span>✓ {savedNotice}</span>
+          </div>
+        )}
         <form
           onSubmit={e => {
             e.preventDefault();
             perform(async () => {
-              await request(`/projects/${project.id}/context`, { body, revision });
+              const res = await request(`/projects/${project.id}/context`, { body, revision });
+              if (res?.revision) setRevision(res.revision);
+              setSavedNotice(`Context saved (revision ${res?.revision ?? revision + 1}).`);
+              setTimeout(() => setSavedNotice(''), 3500);
               await refresh();
             });
           }}>
@@ -57,6 +74,7 @@ export default function ProjectContinuity({
                 value={body[key] || ''}
                 onChange={e => setBody({ ...body, [key]: e.target.value })}
                 disabled={running}
+                placeholder={`Document project ${label.toLowerCase()} here...`}
               />
             </label>
           ))}
@@ -66,12 +84,30 @@ export default function ProjectContinuity({
         </form>
         <h3>Agent notes</h3>
         <p>Notes are reference material. Your requirements take precedence.</p>
-        {(project.context?.agent_notes || []).map((note, i) => (
-          <article className="file-plan" key={i}>
-            <p>{note.text}</p>
-            <small>{new Date(note.at).toLocaleString()}</small>
-          </article>
-        ))}
+        {(() => {
+          const notes = Array.isArray(project.context?.agent_notes)
+            ? project.context.agent_notes
+            : typeof project.context?.agent_notes === 'string' && project.context.agent_notes.trim()
+            ? [{ text: project.context.agent_notes, at: project.context.updated_at || new Date().toISOString() }]
+            : [];
+          if (!notes.length) {
+            return (
+              <p className="muted" style={{ fontStyle: 'italic', fontSize: '13px' }}>
+                No agent notes recorded yet. Notes captured during AI build runs will appear here.
+              </p>
+            );
+          }
+          return notes.map((note, i) => {
+            const noteText = typeof note === 'string' ? note : (note?.text || '');
+            const noteAt = typeof note === 'object' && note?.at ? note.at : null;
+            return (
+              <article className="file-plan" key={i}>
+                <p>{noteText}</p>
+                {noteAt && <small>{new Date(noteAt).toLocaleString()}</small>}
+              </article>
+            );
+          });
+        })()}
       </div>
     );
   return (

@@ -7,6 +7,9 @@ import {
   BookOpen,
   Check,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  ChevronUp,
   CircleDollarSign,
   Code2,
   Database,
@@ -27,6 +30,7 @@ import {
   Camera,
   Package,
   Rocket,
+  Settings,
   SlidersHorizontal,
   Smartphone,
   ShieldCheck,
@@ -44,6 +48,8 @@ import DocumentsPanel from './panels/DocumentsPanel';
 import FilesPanel from './panels/FilesPanel';
 import RecoveryPanel from './panels/RecoveryPanel';
 import MobilePanel from './panels/MobilePanel';
+import SettingsPanel from './panels/SettingsPanel';
+import GlobalSettingsModal from './GlobalSettingsModal';
 import { date } from './format';
 import ProjectContinuity from './ProjectContinuity';
 
@@ -71,6 +77,9 @@ export default function App() {
   const [mode, setMode] = useState('coder');
   const [prompt, setPrompt] = useState('');
   const [tab, setTab] = useState('preview');
+  const [showSidebar, setShowSidebar] = useState(true);
+  const [showPreviewPanel, setShowPreviewPanel] = useState(true);
+  const [showPreviewMenu, setShowPreviewMenu] = useState(true);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
   const [run, setRun] = useState(null);
@@ -106,6 +115,44 @@ export default function App() {
   const end = useRef(null);
   const selectedId = useRef(null);
   const fileRequest = useRef(0);
+  const tabListRef = useRef(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  const updateScrollIndicators = () => {
+    const el = tabListRef.current;
+    if (!el) return;
+    setCanScrollLeft(el.scrollLeft > 4);
+    setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 4);
+  };
+
+  useEffect(() => {
+    updateScrollIndicators();
+    window.addEventListener('resize', updateScrollIndicators);
+    return () => window.removeEventListener('resize', updateScrollIndicators);
+  }, [project?.id, tab]);
+
+  useEffect(() => {
+    const activeEl = tabListRef.current?.querySelector(`button[aria-selected="true"]`);
+    if (activeEl) {
+      activeEl.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+    }
+  }, [tab]);
+
+  const scrollTabs = (direction) => {
+    if (tabListRef.current) {
+      tabListRef.current.scrollBy({ left: direction * 180, behavior: 'smooth' });
+      setTimeout(updateScrollIndicators, 300);
+    }
+  };
+
+  const handleTabsWheel = (e) => {
+    if (tabListRef.current && e.deltaY !== 0) {
+      e.preventDefault();
+      tabListRef.current.scrollLeft += e.deltaY;
+      updateScrollIndicators();
+    }
+  };
 
   async function refreshList() {
     const p = await request('/projects');
@@ -225,7 +272,15 @@ export default function App() {
     if (tab === 'code')
       request(`/projects/${id}/files`)
         .then(p => {
-          if (valid) setPaths(p);
+          if (valid) {
+            const list = Array.isArray(p)
+              ? p.map(item => (typeof item === 'string' ? item : item.path))
+              : [];
+            setPaths(list);
+            if (list.length > 0 && !selectedPath) {
+              readFile(list[0]);
+            }
+          }
         })
         .catch(e => setError(e.message));
     if (tab === 'logs') loadLogs();
@@ -322,11 +377,13 @@ export default function App() {
     });
   }
   async function readFile(path) {
+    if (!path) return;
+    const filePath = typeof path === 'string' ? path : path?.path || '';
     const serial = ++fileRequest.current;
-    setSelectedPath(path);
+    setSelectedPath(filePath);
     setSource('Loading…');
     try {
-      const data = await request(`/projects/${id}/file?path=${encodeURIComponent(path)}`);
+      const data = await request(`/projects/${id}/file?path=${encodeURIComponent(filePath)}`);
       if (serial === fileRequest.current) setSource(data.content);
     } catch (e) {
       setError(e.message);
@@ -416,16 +473,26 @@ export default function App() {
 
   return (
     <div className="app">
-      <aside className="sidebar">
-        <a className="brand" href="/" aria-label="Local Foundry home">
-          <span className="brand-mark">
-            <Code2 size={20} />
-          </span>
-          <span>
-            local<span className="muted">foundry</span>
-            <small>YOUR PERSONAL APP STUDIO</small>
-          </span>
-        </a>
+      <aside className={`sidebar ${!showSidebar ? 'hidden' : ''}`}>
+        <div className="brand-header">
+          <a className="brand" href="/" aria-label="Local Foundry home">
+            <span className="brand-mark">
+              <Code2 size={20} />
+            </span>
+            <span>
+              local<span className="muted">foundry</span>
+              <small>YOUR PERSONAL APP STUDIO</small>
+            </span>
+          </a>
+          <button
+            type="button"
+            className="sidebar-arrow-btn"
+            title="Hide Side menu"
+            aria-label="Hide Side menu"
+            onClick={() => setShowSidebar(false)}>
+            <ChevronLeft size={16} />
+          </button>
+        </div>
         <button className="new-project" onClick={() => setModal('new')}>
           <Plus size={17} /> New project <span>⌘</span>
         </button>
@@ -473,10 +540,35 @@ export default function App() {
         </div>
       </aside>
 
+      {/* Button on the line to hide / show Side Menu */}
+      <div
+        className={`sidebar-divider-line ${!showSidebar ? 'collapsed' : ''}`}
+        title={showSidebar ? 'Click to hide Side Menu' : 'Click to show Side Menu'}>
+        <button
+          type="button"
+          className="line-toggle-btn side-line-btn"
+          aria-label={showSidebar ? 'Click to hide Side Menu' : 'Click to show Side Menu'}
+          title={showSidebar ? 'Click to hide Side Menu' : 'Click to show Side Menu'}
+          onClick={() => setShowSidebar(v => !v)}>
+          {showSidebar ? <ChevronLeft size={13} /> : <ChevronRight size={13} />}
+        </button>
+      </div>
+
       <main className="main">
         <header className="topbar">
-          <div className="breadcrumb">
-            Workspace <span>/</span> <strong>{project?.name || 'Overview'}</strong>
+          <div className="topbar-left">
+            <button
+              type="button"
+              className={`icon-button side-toggle-btn ${!showSidebar ? 'sidebar-hidden' : ''}`}
+              aria-label={showSidebar ? 'Hide Side menu' : 'Show Side menu'}
+              title={showSidebar ? 'Hide Side menu' : 'Show Side menu'}
+              onClick={() => setShowSidebar(v => !v)}>
+              {showSidebar ? <ChevronLeft size={16} /> : <ChevronRight size={16} />}
+              <span className="toggle-label">{showSidebar ? 'Hide Side Menu' : 'Side Menu'}</span>
+            </button>
+            <div className="breadcrumb">
+              Workspace <span>/</span> <strong>{project?.name || 'Overview'}</strong>
+            </div>
           </div>
           <div className="header-actions">
             {config?.offline_only && (
@@ -489,6 +581,13 @@ export default function App() {
                 <Check size={13} /> Checks passed
               </span>
             )}
+            <button
+              className={`icon-button ${modal === 'global-settings' ? 'active' : ''}`}
+              aria-label="Local Foundry Global Settings"
+              title="Local Foundry Global Settings"
+              onClick={() => setModal('global-settings')}>
+              <Settings size={17} />
+            </button>
             <button className="icon-button" aria-label="System diagnostics" onClick={showDiagnostics}>
               <Activity size={17} />
             </button>
@@ -580,12 +679,32 @@ export default function App() {
           </div>
         ) : (
           <div className="workbench">
-            <section className="chat-panel" aria-label="AI conversation">
+            <section className={`chat-panel ${!showPreviewPanel ? 'full-width' : ''}`} aria-label="AI conversation">
               <div className="panel-title">
                 <span>
                   <Wand2 size={16} /> Build together
                 </span>
-                <span className="tiny-label">AI ASSISTANT</span>
+                <div className="panel-title-actions">
+                  <button
+                    type="button"
+                    className="toggle-preview-panel-badge-btn"
+                    title={showPreviewPanel ? 'Click to hide Preview panel' : 'Click to show Preview panel'}
+                    aria-label={showPreviewPanel ? 'Click to hide Preview panel' : 'Click to show Preview panel'}
+                    onClick={() => setShowPreviewPanel(v => !v)}>
+                    {showPreviewPanel ? (
+                      <>
+                        <span>Hide Preview</span>
+                        <ChevronRight size={13} />
+                      </>
+                    ) : (
+                      <>
+                        <ChevronLeft size={13} />
+                        <span>Show Preview</span>
+                      </>
+                    )}
+                  </button>
+                  <span className="tiny-label">AI ASSISTANT</span>
+                </div>
               </div>
               <div className="conversation">
                 <div className="assistant-intro">
@@ -681,8 +800,20 @@ export default function App() {
                 />
                 <div className="composer-bottom">
                   <div className="composer-options">
-                    <label className="model-picker">
+                    <div
+                      className="model-picker"
+                      title="Select agent role (Coder, Documents, Files)"
+                      onClick={e => {
+                        const sel = e.currentTarget.querySelector('select');
+                        if (sel && typeof sel.showPicker === 'function') {
+                          try { sel.showPicker(); } catch {}
+                        }
+                      }}>
                       <Wand2 size={13} />
+                      <span className="picker-text">
+                        {mode === 'coder' ? 'Coder' : mode === 'documents' ? 'Documents' : 'Files'}
+                      </span>
+                      <ChevronDown size={12} className="picker-arrow" />
                       <select
                         aria-label="Agent role"
                         value={mode}
@@ -692,10 +823,22 @@ export default function App() {
                         <option value="documents">Documents</option>
                         <option value="files">Files</option>
                       </select>
-                      <ChevronDown size={12} />
-                    </label>
-                    <label className="model-picker">
+                    </div>
+
+                    <div
+                      className="model-picker"
+                      title="Select AI model provider (Claude, OpenAI, Local AI)"
+                      onClick={e => {
+                        const sel = e.currentTarget.querySelector('select');
+                        if (sel && typeof sel.showPicker === 'function') {
+                          try { sel.showPicker(); } catch {}
+                        }
+                      }}>
                       <Zap size={13} />
+                      <span className="picker-text">
+                        {provider === 'anthropic' ? 'Claude' : provider === 'openai' ? 'OpenAI' : 'Local AI'}
+                      </span>
+                      <ChevronDown size={12} className="picker-arrow" />
                       <select
                         aria-label="AI provider"
                         value={provider}
@@ -705,8 +848,48 @@ export default function App() {
                         <option value="openai">OpenAI</option>
                         <option value="local">Local AI</option>
                       </select>
-                      <ChevronDown size={12} />
-                    </label>
+                    </div>
+
+                    <div
+                      className="model-picker prompt-ideas-picker"
+                      title="Quick prompt templates and ideas"
+                      onClick={e => {
+                        const sel = e.currentTarget.querySelector('select');
+                        if (sel && typeof sel.showPicker === 'function') {
+                          try { sel.showPicker(); } catch {}
+                        }
+                      }}>
+                      <span className="picker-text">💡 Ideas</span>
+                      <ChevronDown size={12} className="picker-arrow" />
+                      <select
+                        aria-label="Quick prompt suggestions"
+                        value=""
+                        onChange={e => {
+                          if (e.target.value) setPrompt(e.target.value);
+                        }}
+                        disabled={running}>
+                        <option value="" disabled>💡 Choose a change or prompt idea…</option>
+                        <option value="Add categories and tag filtering with colored badges">
+                          🏷️ Add categories & filter tags
+                        </option>
+                        <option value="Add weekly completion progress bar and monthly statistics view">
+                          📊 Add weekly stats & charts
+                        </option>
+                        <option value="Add daily reminder notification times and sound alert settings">
+                          🔔 Add reminder notifications
+                        </option>
+                        <option value="Add export to CSV and JSON backup download options">
+                          💾 Export data to CSV & JSON
+                        </option>
+                        <option value="Add dark and light theme toggle with smooth animation">
+                          🌓 Dark / Light theme toggle
+                        </option>
+                        <option value="Refactor responsive layout for small mobile screens and eliminate horizontal overflow">
+                          📱 Mobile responsive layout check
+                        </option>
+                      </select>
+                    </div>
+
                     <button
                       type="button"
                       className="budget-button"
@@ -769,42 +952,124 @@ export default function App() {
               </div>
             </section>
 
-            <section className="preview-panel" aria-label="Project workspace">
-              <div className="preview-tabs">
-                <div role="tablist" aria-label="Project views">
-                  {[
-                    ['preview', Monitor, 'Preview'],
-                    ['roadmap', Wand2, 'Roadmap'],
-                    ['context', BookOpen, 'Context'],
-                    ['visual', Camera, 'Visual'],
-                    ['code', Code2, 'Code'],
-                    ['packages', Package, 'Packages'],
-                    ['release', Rocket, 'Release'],
-                    ['mobile', Smartphone, 'Mobile'],
-                    ['logs', Terminal, 'Logs'],
-                    ['versions', History, 'Versions'],
-                    ['data', Database, 'Data'],
-                    ['documents', BookOpen, 'Docs'],
-                    ['files', Files, 'Files'],
-                    ['recovery', Archive, 'Recovery'],
-                  ].map(([key, Icon, label]) => (
+            {/* Button on the line to hide / show Preview Panel */}
+            <div
+              className={`workbench-divider-line ${!showPreviewPanel ? 'collapsed' : ''}`}
+              title={showPreviewPanel ? 'Click to hide Preview panel' : 'Click to show Preview panel'}>
+              <button
+                type="button"
+                className="line-toggle-btn preview-line-btn"
+                aria-label={showPreviewPanel ? 'Click to hide Preview panel' : 'Click to show Preview panel'}
+                title={showPreviewPanel ? 'Click to hide Preview panel' : 'Click to show Preview panel'}
+                onClick={() => setShowPreviewPanel(v => !v)}>
+                {showPreviewPanel ? <ChevronRight size={13} /> : <ChevronLeft size={13} />}
+              </button>
+            </div>
+
+            <section
+              className={`preview-panel ${!showPreviewPanel ? 'hidden' : ''}`}
+              aria-label="Project workspace">
+              {showPreviewMenu ? (
+                <div className="preview-tabs">
+                  <div className="tabs-nav-container">
+                    {canScrollLeft && (
+                      <button
+                        type="button"
+                        className="tab-scroll-btn left"
+                        aria-label="Scroll tabs left"
+                        title="Scroll tabs left"
+                        onClick={() => scrollTabs(-1)}>
+                        <ChevronLeft size={14} />
+                      </button>
+                    )}
+                    <div
+                      ref={tabListRef}
+                      role="tablist"
+                      aria-label="Project views"
+                      className="tabs-scroll-area"
+                      onWheel={handleTabsWheel}
+                      onScroll={updateScrollIndicators}>
+                      {[
+                        ['preview', Monitor, 'Preview'],
+                        ['roadmap', Wand2, 'Roadmap'],
+                        ['context', BookOpen, 'Context'],
+                        ['settings', Settings, 'App Settings'],
+                        ['visual', Camera, 'Visual'],
+                        ['code', Code2, 'Code'],
+                        ['packages', Package, 'Packages'],
+                        ['release', Rocket, 'Release'],
+                        ['mobile', Smartphone, 'Mobile'],
+                        ['logs', Terminal, 'Logs'],
+                        ['versions', History, 'Versions'],
+                        ['data', Database, 'Data'],
+                        ['documents', BookOpen, 'Docs'],
+                        ['files', Files, 'Files'],
+                        ['recovery', Archive, 'Recovery'],
+                      ].map(([key, Icon, label]) => (
+                        <button
+                          role="tab"
+                          title={label}
+                          aria-label={label}
+                          aria-selected={tab === key}
+                          key={key}
+                          className={tab === key ? 'active' : ''}
+                          onClick={() => setTab(key)}>
+                          <Icon size={14} />
+                          <span>{label}</span>
+                        </button>
+                      ))}
+                    </div>
+                    {canScrollRight && (
+                      <button
+                        type="button"
+                        className="tab-scroll-btn right"
+                        aria-label="Scroll tabs right"
+                        title="Scroll tabs right"
+                        onClick={() => scrollTabs(1)}>
+                        <ChevronRight size={14} />
+                      </button>
+                    )}
+                  </div>
+                  <div className="preview-tabs-right">
+                    <span className="sandbox-label">
+                      <ShieldCheck size={13} /> {tab === 'mobile' ? 'Native tools' : 'Sandbox'}
+                    </span>
                     <button
-                      role="tab"
-                      title={label}
-                      aria-label={label}
-                      aria-selected={tab === key}
-                      key={key}
-                      className={tab === key ? 'active' : ''}
-                      onClick={() => setTab(key)}>
-                      <Icon size={14} />
-                      {label}
+                      type="button"
+                      className="preview-menu-toggle-btn"
+                      aria-label="Hide Preview Menu"
+                      title="Hide Preview Menu"
+                      onClick={() => setShowPreviewMenu(false)}>
+                      <ChevronUp size={14} />
                     </button>
-                  ))}
+                  </div>
                 </div>
-                <span className="sandbox-label">
-                  <ShieldCheck size={13} /> {tab === 'mobile' ? 'Native tools' : 'Sandbox'}
-                </span>
-              </div>
+              ) : (
+                <div className="preview-menu-minibar">
+                  <button
+                    type="button"
+                    className="preview-menu-expand-btn"
+                    aria-label="Show Preview Menu"
+                    title="Show Preview Menu"
+                    onClick={() => setShowPreviewMenu(true)}>
+                    <ChevronDown size={14} />
+                    <span>Show Preview Menu (Current view: <strong>{tab}</strong>)</span>
+                  </button>
+                  <div className="preview-tabs-right">
+                    <span className="sandbox-label">
+                      <ShieldCheck size={13} /> {tab === 'mobile' ? 'Native tools' : 'Sandbox'}
+                    </span>
+                    <button
+                      type="button"
+                      className="preview-menu-toggle-btn"
+                      aria-label="Show Preview Menu"
+                      title="Show Preview Menu"
+                      onClick={() => setShowPreviewMenu(true)}>
+                      <ChevronDown size={14} />
+                    </button>
+                  </div>
+                </div>
+              )}
               {['context', 'roadmap'].includes(tab) && (
                 <ProjectContinuity
                   tab={tab}
@@ -850,6 +1115,16 @@ export default function App() {
                     );
                   }}
                   onValidate={() => perform(() => launch(`/projects/${id}/validate`))}
+                />
+              )}
+              {tab === 'settings' && (
+                <SettingsPanel
+                  key={project.id}
+                  project={project}
+                  config={config}
+                  running={running}
+                  refresh={() => refreshProject(id)}
+                  onOpenGlobalSettings={() => setModal('global-settings')}
                 />
               )}
               {tab === 'preview' && (
@@ -942,15 +1217,18 @@ export default function App() {
               {tab === 'code' && (
                 <div className="code-layout">
                   <nav aria-label="Source files" className="file-list">
-                    {paths.map(p => (
-                      <button
-                        key={p}
-                        className={selectedPath === p ? 'selected' : ''}
-                        onClick={() => readFile(p)}>
-                        <FileCode2 size={13} />
-                        {p}
-                      </button>
-                    ))}
+                    {paths.map(item => {
+                      const filePath = typeof item === 'string' ? item : item?.path || '';
+                      return (
+                        <button
+                          key={filePath}
+                          className={selectedPath === filePath ? 'selected' : ''}
+                          onClick={() => readFile(filePath)}>
+                          <FileCode2 size={13} />
+                          <span>{filePath}</span>
+                        </button>
+                      );
+                    })}
                   </nav>
                   <div className="source-pane">
                     <div className="source-title">
@@ -1300,6 +1578,24 @@ export default function App() {
                   </button>
                 )}
               </form>
+            )}
+            {modal === 'global-settings' && (
+              <GlobalSettingsModal
+                config={config}
+                provider={provider}
+                setProvider={setProvider}
+                budget={budget}
+                setBudget={setBudget}
+                maxInput={maxInput}
+                setMaxInput={setMaxInput}
+                maxOutput={maxOutput}
+                setMaxOutput={setMaxOutput}
+                buildOptions={buildOptions}
+                setBuildOptions={setBuildOptions}
+                onClose={() => setModal(null)}
+                onShowDiagnostics={showDiagnostics}
+                onSaveNotice={msg => setNotice(msg)}
+              />
             )}
             {modal === 'budget' && (
               <form

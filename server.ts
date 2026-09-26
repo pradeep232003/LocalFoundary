@@ -60,17 +60,30 @@ interface Run {
   };
 }
 
+interface AgentNote {
+  text: string;
+  at: string;
+}
+
 interface ProjectContext {
   body: {
     requirements: string;
     architecture: string;
     data_model: string;
     decisions: string;
-    questions: string;
+    open_questions: string;
+    [key: string]: string | undefined;
   };
   revision: number;
-  agent_notes: string;
+  agent_notes: AgentNote[];
   updated_at: string;
+}
+
+interface EnvVariable {
+  key: string;
+  value: string;
+  scope: string;
+  description?: string;
 }
 
 interface Project {
@@ -97,6 +110,156 @@ interface Project {
   active_run: string | null;
   active_run_kind: string | null;
   files: Record<string, string>; // path -> content
+  env_vars: EnvVariable[];
+  mobile_builds?: any[];
+}
+
+function formatRawEnv(vars: EnvVariable[] = []): string {
+  return vars
+    .map(v => `# ${v.description || v.scope}\n${v.key}=${v.value}`)
+    .join('\n\n');
+}
+
+function escapeXml(unsafe: string): string {
+  return String(unsafe || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
+}
+
+function generateScreenshotSvg(projectName: string, reqPath: string, viewport: 'desktop' | 'mobile'): string {
+  const isMobile = viewport === 'mobile';
+  const width = isMobile ? 390 : 1280;
+  const height = isMobile ? 844 : 800;
+
+  if (isMobile) {
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}">
+      <rect width="100%" height="100%" fill="#0c140e"/>
+      <!-- Mobile Top Bar -->
+      <rect width="100%" height="44" fill="#111c14"/>
+      <text x="24" y="28" fill="#e2fae7" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="14" font-weight="600">9:41</text>
+      <circle cx="340" cy="24" r="3" fill="#8da491"/>
+      <rect x="348" y="19" width="22" height="11" rx="3" fill="none" stroke="#8da491" stroke-width="1.5"/>
+      <rect x="350" y="21" width="14" height="7" rx="1.5" fill="#8da491"/>
+      <!-- App Header -->
+      <rect y="44" width="100%" height="60" fill="#142218" stroke="#253a2a" stroke-width="1"/>
+      <text x="20" y="80" fill="#dbedd6" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="18" font-weight="700">${escapeXml(projectName)}</text>
+      <text x="20" y="96" fill="#75937a" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="11">Route: ${escapeXml(reqPath)}</text>
+      <!-- Mobile Content Cards -->
+      <g transform="translate(16, 120)">
+        <!-- Card 1 -->
+        <rect width="358" height="110" rx="12" fill="#16271c" stroke="#2d4834" stroke-width="1"/>
+        <circle cx="36" cy="36" r="14" fill="#2d5e3c"/>
+        <text x="31" y="41" fill="#4ade80" font-size="16">✓</text>
+        <text x="64" y="34" fill="#f0fbf2" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="16" font-weight="600">Morning Meditation</text>
+        <text x="64" y="52" fill="#88a58f" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="12">15 mins mindfulness · 14 day streak</text>
+        <rect x="64" y="68" width="270" height="6" rx="3" fill="#0f1911"/>
+        <rect x="64" y="68" width="230" height="6" rx="3" fill="#4ade80"/>
+        <text x="64" y="92" fill="#698570" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="10">85% consistency this month</text>
+
+        <!-- Card 2 -->
+        <g transform="translate(0, 126)">
+          <rect width="358" height="110" rx="12" fill="#16271c" stroke="#2d4834" stroke-width="1"/>
+          <circle cx="36" cy="36" r="14" fill="#2d5e3c"/>
+          <text x="31" y="41" fill="#4ade80" font-size="16">✓</text>
+          <text x="64" y="34" fill="#f0fbf2" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="16" font-weight="600">30-Min Cardio / Run</text>
+          <text x="64" y="52" fill="#88a58f" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="12">Outdoor track · 7 day streak</text>
+          <rect x="64" y="68" width="270" height="6" rx="3" fill="#0f1911"/>
+          <rect x="64" y="68" width="180" height="6" rx="3" fill="#38bdf8"/>
+          <text x="64" y="92" fill="#698570" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="10">72% consistency this month</text>
+        </g>
+
+        <!-- Card 3 -->
+        <g transform="translate(0, 252)">
+          <rect width="358" height="110" rx="12" fill="#16271c" stroke="#2d4834" stroke-width="1"/>
+          <circle cx="36" cy="36" r="14" fill="#223628"/>
+          <text x="64" y="34" fill="#d1e3ce" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="16" font-weight="600">Deep Work Session (2h)</text>
+          <text x="64" y="52" fill="#88a58f" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="12">Focused code delivery</text>
+          <rect x="64" y="68" width="270" height="6" rx="3" fill="#0f1911"/>
+          <rect x="64" y="68" width="90" height="6" rx="3" fill="#fbbf24"/>
+          <text x="64" y="92" fill="#698570" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="10">Scheduled for 2:00 PM</text>
+        </g>
+      </g>
+      <!-- Mobile Bottom Tab Bar -->
+      <rect y="${height - 64}" width="100%" height="64" fill="#111c14" stroke="#253a2a" stroke-width="1"/>
+      <circle cx="70" cy="${height - 36}" r="8" fill="#4ade80"/>
+      <circle cx="195" cy="${height - 36}" r="8" fill="#45604b"/>
+      <circle cx="320" cy="${height - 36}" r="8" fill="#45604b"/>
+    </svg>`;
+  }
+
+  // Desktop
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}">
+    <rect width="100%" height="100%" fill="#0a120c"/>
+    <!-- Desktop Browser Chrome Header -->
+    <rect width="100%" height="42" fill="#142017" stroke="#233526" stroke-width="1"/>
+    <circle cx="20" cy="21" r="5.5" fill="#ef4444"/>
+    <circle cx="36" cy="21" r="5.5" fill="#f59e0b"/>
+    <circle cx="52" cy="21" r="5.5" fill="#10b981"/>
+    <!-- Address Bar -->
+    <rect x="180" y="8" width="700" height="26" rx="6" fill="#0a120c" stroke="#253a2a" stroke-width="1"/>
+    <text x="200" y="25" fill="#88a38d" font-family="ui-monospace, monospace" font-size="12">http://localhost:5173${escapeXml(reqPath)}</text>
+    <!-- App Navbar -->
+    <rect y="42" width="100%" height="56" fill="#111d14" stroke="#223626" stroke-width="1"/>
+    <text x="32" y="76" fill="#e0f2dc" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="18" font-weight="700">${escapeXml(projectName)}</text>
+    <rect x="1100" y="54" width="140" height="32" rx="6" fill="#245435"/>
+    <text x="1132" y="74" fill="#f0fdf4" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="13" font-weight="600">+ New Habit</text>
+    <!-- Main Dashboard Viewport Content -->
+    <g transform="translate(32, 120)">
+      <!-- Metric Cards -->
+      <g>
+        <rect width="280" height="110" rx="10" fill="#142217" stroke="#273e2d" stroke-width="1"/>
+        <text x="24" y="36" fill="#7d9b83" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="12" font-weight="600">ACTIVE STREAK</text>
+        <text x="24" y="78" fill="#4ade80" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="34" font-weight="800">14 Days</text>
+      </g>
+      <g transform="translate(305, 0)">
+        <rect width="280" height="110" rx="10" fill="#142217" stroke="#273e2d" stroke-width="1"/>
+        <text x="24" y="36" fill="#7d9b83" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="12" font-weight="600">COMPLETION RATE</text>
+        <text x="24" y="78" fill="#60a5fa" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="34" font-weight="800">92.4%</text>
+      </g>
+      <g transform="translate(610, 0)">
+        <rect width="280" height="110" rx="10" fill="#142217" stroke="#273e2d" stroke-width="1"/>
+        <text x="24" y="36" fill="#7d9b83" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="12" font-weight="600">TOTAL SESSIONS</text>
+        <text x="24" y="78" fill="#fbbf24" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="34" font-weight="800">184</text>
+      </g>
+      <g transform="translate(915, 0)">
+        <rect width="300" height="110" rx="10" fill="#142217" stroke="#273e2d" stroke-width="1"/>
+        <text x="24" y="36" fill="#7d9b83" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="12" font-weight="600">SECURITY &amp; VALIDATION</text>
+        <text x="24" y="74" fill="#a7f3d0" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="20" font-weight="700">✓ Verified</text>
+      </g>
+      <!-- Main Content Table / List -->
+      <g transform="translate(0, 140)">
+        <rect width="1215" height="460" rx="10" fill="#121e15" stroke="#253a29" stroke-width="1"/>
+        <text x="28" y="40" fill="#d9ecce" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="17" font-weight="700">Today's Habits &amp; Routines</text>
+        <!-- Rows -->
+        <line x1="28" y1="62" x2="1187" y2="62" stroke="#233626" stroke-width="1"/>
+        <rect x="28" y="80" width="1159" height="74" rx="8" fill="#17271c" stroke="#2e4835" stroke-width="1"/>
+        <circle cx="56" cy="117" r="14" fill="#2d5e3c"/>
+        <text x="51" y="122" fill="#4ade80" font-size="16">✓</text>
+        <text x="84" y="114" fill="#ecfdf5" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="15" font-weight="600">Morning Meditation &amp; Mindfulness</text>
+        <text x="84" y="132" fill="#8ba891" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="12">15 minutes breathing exercise · Category: Wellness</text>
+        <rect x="1060" y="102" width="100" height="30" rx="6" fill="#23422e"/>
+        <text x="1080" y="122" fill="#bbf7d0" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="12">Completed</text>
+
+        <rect x="28" y="168" width="1159" height="74" rx="8" fill="#17271c" stroke="#2e4835" stroke-width="1"/>
+        <circle cx="56" cy="205" r="14" fill="#2d5e3c"/>
+        <text x="51" y="210" fill="#4ade80" font-size="16">✓</text>
+        <text x="84" y="202" fill="#ecfdf5" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="15" font-weight="600">30-Min High Intensity Cardio / Outdoor Run</text>
+        <text x="84" y="220" fill="#8ba891" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="12">Track distance and heart-rate recovery · Category: Fitness</text>
+        <rect x="1060" y="190" width="100" height="30" rx="6" fill="#23422e"/>
+        <text x="1080" y="210" fill="#bbf7d0" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="12">Completed</text>
+
+        <rect x="28" y="256" width="1159" height="74" rx="8" fill="#17271c" stroke="#2e4835" stroke-width="1"/>
+        <circle cx="56" cy="293" r="14" fill="#1d3123"/>
+        <text x="84" y="290" fill="#ecfdf5" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="15" font-weight="600">Deep Work Programming Session</text>
+        <text x="84" y="308" fill="#8ba891" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="12">2 hours uninterrupted system design · Category: Career</text>
+        <rect x="1060" y="278" width="100" height="30" rx="6" fill="#1c3022"/>
+        <text x="1084" y="298" fill="#93af98" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="12">Pending</text>
+      </g>
+    </g>
+  </svg>`;
 }
 
 const projects = new Map<string, Project>();
@@ -467,10 +630,30 @@ function seedInitialProject(): Project {
     dependency_requests: [],
     visual_checks: [
       {
-        id: generateId(),
+        id: 'vis_desktop_1',
         viewport: 'desktop',
+        path: '/',
         status: 'passed',
+        source_digest: 'initial',
         created_at: new Date(Date.now() - 3600000 * 1.5).toISOString(),
+        title: 'Habit Tracker · Desktop (1280×800)',
+        horizontal_overflow: false,
+        actions: [{ action: 'visible', selector: 'h1', value: '' }],
+        errors: [],
+        failed_requests: [],
+      },
+      {
+        id: 'vis_mobile_1',
+        viewport: 'mobile',
+        path: '/',
+        status: 'passed',
+        source_digest: 'initial',
+        created_at: new Date(Date.now() - 3600000 * 1.2).toISOString(),
+        title: 'Habit Tracker · Mobile (390×844)',
+        horizontal_overflow: false,
+        actions: [{ action: 'visible', selector: '.card', value: '' }],
+        errors: [],
+        failed_requests: [],
       },
     ],
     context: {
@@ -479,10 +662,15 @@ function seedInitialProject(): Project {
         architecture: 'React frontend with dark mode palette, FastAPI REST endpoints, and PostgreSQL schema.',
         data_model: 'habits table with id, title, completed, streak, and timestamp fields.',
         decisions: 'Local storage caching with backend sync on change.',
-        questions: 'Add category tags or multi-user accounts in next release?',
+        open_questions: 'Add category tags or multi-user accounts in next release?',
       },
       revision: 1,
-      agent_notes: 'Components are organized cleanly in frontend/src with CSS variables.',
+      agent_notes: [
+        {
+          text: 'Components are organized cleanly in frontend/src with CSS variables.',
+          at: new Date(Date.now() - 3600000).toISOString(),
+        },
+      ],
       updated_at: new Date(Date.now() - 3600000).toISOString(),
     },
     feature_plans: [
@@ -508,6 +696,14 @@ function seedInitialProject(): Project {
     active_run: null,
     active_run_kind: null,
     files,
+    env_vars: [
+      { key: 'APP_ENV', value: 'development', scope: 'runtime', description: 'Application target environment' },
+      { key: 'PORT', value: '5173', scope: 'runtime', description: 'Container web server port' },
+      { key: 'DATABASE_URL', value: 'postgresql://app:preview-only@db:5432/app', scope: 'runtime', description: 'PostgreSQL connection URL' },
+      { key: 'LOG_LEVEL', value: 'debug', scope: 'runtime', description: 'Logger verbosity level' },
+      { key: 'CORS_ALLOWED_ORIGINS', value: 'http://localhost:3000', scope: 'runtime', description: 'Allowed origins for CORS' },
+      { key: 'FASTAPI_DEBUG', value: '1', scope: 'runtime', description: 'FastAPI debug mode' },
+    ],
   };
 
   projects.set(id, initialProject);
@@ -684,10 +880,15 @@ async function startServer() {
           architecture: 'React + FastAPI + PostgreSQL template.',
           data_model: 'Initial starter schemas.',
           decisions: 'Adopted standard foundry blueprint.',
-          questions: 'What features to implement next?',
+          open_questions: 'What features to implement next?',
         },
         revision: 0,
-        agent_notes: 'Initial workspace created.',
+        agent_notes: [
+          {
+            text: 'Initial workspace created with starter schemas.',
+            at: new Date().toISOString(),
+          },
+        ],
         updated_at: new Date().toISOString(),
       },
       feature_plans: [],
@@ -695,6 +896,12 @@ async function startServer() {
       active_run: null,
       active_run_kind: null,
       files,
+      env_vars: [
+        { key: 'APP_ENV', value: 'development', scope: 'runtime', description: 'Application target environment' },
+        { key: 'PORT', value: '5173', scope: 'runtime', description: 'Container web server port' },
+        { key: 'DATABASE_URL', value: 'postgresql://app:preview-only@db:5432/app', scope: 'runtime', description: 'PostgreSQL connection URL' },
+        { key: 'LOG_LEVEL', value: 'info', scope: 'runtime', description: 'Logger verbosity level' },
+      ],
     };
 
     projects.set(id, project);
@@ -711,6 +918,63 @@ async function startServer() {
     res.json(project);
   });
 
+  // Environment variables endpoints
+  app.get('/api/projects/:id/env', (req: Request, res: Response) => {
+    const project = projects.get(req.params.id);
+    if (!project) {
+      res.status(404).json({ detail: 'Project not found.' });
+      return;
+    }
+    res.json({
+      variables: project.env_vars || [],
+      raw: formatRawEnv(project.env_vars || []),
+    });
+  });
+
+  app.post('/api/projects/:id/env', (req: Request, res: Response) => {
+    const project = projects.get(req.params.id);
+    if (!project) {
+      res.status(404).json({ detail: 'Project not found.' });
+      return;
+    }
+    const { variables, key, value, scope = 'runtime', description } = req.body;
+    if (Array.isArray(variables)) {
+      project.env_vars = variables;
+    } else if (key) {
+      const cleanKey = String(key).trim().toUpperCase().replace(/[^A-Z0-9_]/g, '_');
+      const existing = (project.env_vars || []).filter(v => v.key !== cleanKey);
+      existing.push({
+        key: cleanKey,
+        value: String(value ?? ''),
+        scope: String(scope),
+        description: description ? String(description) : undefined,
+      });
+      project.env_vars = existing;
+    }
+    project.files['.env'] = formatRawEnv(project.env_vars);
+    project.source_digest = computeDigest(project.files);
+    res.json({
+      variables: project.env_vars,
+      raw: formatRawEnv(project.env_vars),
+    });
+  });
+
+  app.delete('/api/projects/:id/env/:key', (req: Request, res: Response) => {
+    const project = projects.get(req.params.id);
+    if (!project) {
+      res.status(404).json({ detail: 'Project not found.' });
+      return;
+    }
+    const targetKey = req.params.key.toUpperCase();
+    project.env_vars = (project.env_vars || []).filter(v => v.key !== targetKey);
+    project.files['.env'] = formatRawEnv(project.env_vars);
+    project.source_digest = computeDigest(project.files);
+    res.json({
+      variables: project.env_vars,
+      raw: formatRawEnv(project.env_vars),
+    });
+  });
+
   // Project files listing
   app.get('/api/projects/:id/files', (req: Request, res: Response) => {
     const project = projects.get(req.params.id);
@@ -718,12 +982,16 @@ async function startServer() {
       res.status(404).json({ detail: 'Project not found.' });
       return;
     }
-    const list = Object.keys(project.files).map(filePath => ({
-      path: filePath,
-      size: Buffer.byteLength(project.files[filePath], 'utf-8'),
-      modified: project.created_at,
-    }));
-    res.json(list);
+    if (req.query.format === 'details') {
+      const list = Object.keys(project.files).map(filePath => ({
+        path: filePath,
+        size: Buffer.byteLength(project.files[filePath], 'utf-8'),
+        modified: project.created_at,
+      }));
+      res.json(list);
+    } else {
+      res.json(Object.keys(project.files));
+    }
   });
 
   // Inspect individual file
@@ -775,9 +1043,16 @@ async function startServer() {
       return;
     }
     const { body, revision } = req.body;
-    project.context.body = body;
+    project.context.body = { ...project.context.body, ...body };
     project.context.revision = (revision ?? project.context.revision) + 1;
     project.context.updated_at = new Date().toISOString();
+    if (!Array.isArray(project.context.agent_notes)) {
+      project.context.agent_notes = [];
+    }
+    project.context.agent_notes.unshift({
+      text: `Context revision ${project.context.revision} updated.`,
+      at: new Date().toISOString(),
+    });
     res.json(project.context);
   });
 
@@ -1309,6 +1584,85 @@ async function startServer() {
     res.json({ run_id: runId, kind: 'validation' });
   });
 
+  // Run browser visual check
+  app.post('/api/projects/:id/visual', (req: Request, res: Response) => {
+    const project = projects.get(req.params.id);
+    if (!project) {
+      res.status(404).json({ detail: 'Project not found.' });
+      return;
+    }
+    const { path: checkPath = '/', viewport = 'desktop', actions = [] } = req.body;
+    const runId = generateId();
+    const checkId = generateId();
+    const eventTime = new Date().toISOString();
+
+    const newCheck = {
+      id: checkId,
+      viewport: viewport === 'mobile' ? 'mobile' : 'desktop',
+      path: String(checkPath || '/'),
+      status: 'passed',
+      source_digest: project.source_digest,
+      created_at: eventTime,
+      title: `${project.name} · ${viewport === 'mobile' ? 'Mobile (390×844)' : 'Desktop (1280×800)'}`,
+      horizontal_overflow: false,
+      actions: Array.isArray(actions) ? actions : [],
+      errors: [],
+      failed_requests: [],
+    };
+
+    if (!Array.isArray(project.visual_checks)) {
+      project.visual_checks = [];
+    }
+    project.visual_checks.unshift(newCheck);
+
+    const run: Run = {
+      id: runId,
+      project_id: project.id,
+      kind: 'visual',
+      status: 'completed',
+      created_at: eventTime,
+      events: [
+        { id: nextEventId++, kind: 'status', text: `Spinning up headless browser container for ${viewport} viewport...`, timestamp: eventTime },
+        { id: nextEventId++, kind: 'event', text: `Navigating to internal preview endpoint "${checkPath}"...`, timestamp: eventTime },
+        { id: nextEventId++, kind: 'status', text: 'Inspecting layout tree, viewport overflow boundaries, and rendering stability...', timestamp: eventTime },
+        { id: nextEventId++, kind: 'preview', text: `Snapshot captured successfully for ${viewport} viewport. 0 regressions.`, timestamp: eventTime },
+      ],
+      usage: {
+        input_tokens: 0,
+        output_tokens: 0,
+        requests: 1,
+        retries: 0,
+        estimated_usd: 0,
+        limits: {
+          budget_usd: 2.0,
+          max_input_tokens: 180000,
+          max_output_tokens: 24000,
+          input_rate: 0,
+          output_rate: 0,
+        },
+      },
+    };
+    runs.set(runId, run);
+    res.json({ run_id: runId, kind: 'visual', check: newCheck });
+  });
+
+  // Get visual screenshot image
+  app.get('/api/projects/:id/visual/:visualId', (req: Request, res: Response) => {
+    const project = projects.get(req.params.id);
+    if (!project) {
+      res.status(404).json({ detail: 'Project not found.' });
+      return;
+    }
+    const check = (project.visual_checks || []).find((c: any) => c.id === req.params.visualId);
+    const viewport = check?.viewport === 'mobile' ? 'mobile' : 'desktop';
+    const checkPath = check?.path || '/';
+    const svg = generateScreenshotSvg(project.name, checkPath, viewport);
+
+    res.setHeader('Content-Type', 'image/svg+xml');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.send(svg);
+  });
+
   // GitHub review
   app.post('/api/projects/:id/github/review', (req: Request, res: Response) => {
     const project = projects.get(req.params.id);
@@ -1342,9 +1696,18 @@ async function startServer() {
   // Mobile capabilities
   app.get('/api/mobile/capabilities', (req: Request, res: Response) => {
     res.json({
-      apk: true,
-      aab: true,
-      ipa: true,
+      apk: {
+        available: true,
+        blockers: [],
+      },
+      aab: {
+        available: true,
+        blockers: [],
+      },
+      ipa: {
+        available: true,
+        blockers: [],
+      },
       targets: ['apk', 'aab', 'ipa'],
       export_methods: ['debugging', 'release-testing', 'app-store-connect'],
     });
@@ -1352,17 +1715,30 @@ async function startServer() {
 
   // Mobile builds listing
   app.get('/api/projects/:id/mobile/builds', (req: Request, res: Response) => {
-    res.json([
-      {
-        id: 'mobile-build-1',
-        target: 'apk',
-        filename: 'app-testing.apk',
-        status: 'completed',
-        created_at: new Date(Date.now() - 3600000).toISOString(),
-        version: '1.0.0',
-        build_number: 1,
-      },
-    ]);
+    const project = projects.get(req.params.id);
+    if (!project) {
+      res.status(404).json({ detail: 'Project not found.' });
+      return;
+    }
+    if (!project.mobile_builds) {
+      project.mobile_builds = [
+        {
+          id: 'mobile-build-1',
+          project_id: project.id,
+          target: 'apk',
+          filename: `${project.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}-debug.apk`,
+          status: 'completed',
+          created_at: new Date(Date.now() - 3600000).toISOString(),
+          version: '1.0.0',
+          build_number: 1,
+          origin: project.preview_url || 'http://localhost:3000',
+          phase: 'Signed debug APK ready for device sideload testing.',
+          bytes: 15420000,
+          sha256: 'a1b2c3d4e5f67890abcdef1234567890abcdef1234567890abcdef1234567890',
+        },
+      ];
+    }
+    res.json(project.mobile_builds);
   });
 
   // Start mobile build
@@ -1372,18 +1748,42 @@ async function startServer() {
       res.status(404).json({ detail: 'Project not found.' });
       return;
     }
-    const { target = 'apk', version = '1.0.0', build_number = 1 } = req.body;
+    const { target = 'apk', version = '1.0.0', build_number = 1, origin } = req.body;
     const runId = generateId();
+    const buildId = generateId();
+    const eventTime = new Date().toISOString();
+
+    const newBuild = {
+      id: buildId,
+      project_id: project.id,
+      target,
+      filename: `${project.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}-v${version}.${target}`,
+      status: 'completed',
+      created_at: eventTime,
+      version: String(version),
+      build_number: Number(build_number) || 1,
+      origin: origin || project.preview_url || 'https://app.example.com',
+      phase: `Signed ${String(target).toUpperCase()} artifact ready for installation.`,
+      bytes: target === 'apk' ? 15800000 : target === 'aab' ? 12400000 : 24100000,
+      sha256: crypto.createHash('sha256').update(buildId + eventTime).digest('hex'),
+    };
+
+    if (!Array.isArray(project.mobile_builds)) {
+      project.mobile_builds = [];
+    }
+    project.mobile_builds.unshift(newBuild);
+
     const run: Run = {
       id: runId,
       project_id: project.id,
       kind: 'mobile_' + target,
       status: 'completed',
-      created_at: new Date().toISOString(),
+      created_at: eventTime,
       events: [
-        { id: nextEventId++, kind: 'status', text: `Assembling mobile ${target.toUpperCase()} artifact...`, timestamp: new Date().toISOString() },
-        { id: nextEventId++, kind: 'status', text: 'Signing package with development keystore...', timestamp: new Date().toISOString() },
-        { id: nextEventId++, kind: 'status', text: `Artifact ready: app-${version}.${target}`, timestamp: new Date().toISOString() },
+        { id: nextEventId++, kind: 'status', text: `Assembling mobile ${String(target).toUpperCase()} artifact...`, timestamp: eventTime },
+        { id: nextEventId++, kind: 'event', text: `Packaging web view container with assets from ${origin || 'app'}...`, timestamp: eventTime },
+        { id: nextEventId++, kind: 'status', text: 'Signing package with development keystore...', timestamp: eventTime },
+        { id: nextEventId++, kind: 'preview', text: `Artifact ready: ${newBuild.filename}`, timestamp: eventTime },
       ],
       usage: {
         input_tokens: 0,
@@ -1401,23 +1801,36 @@ async function startServer() {
       },
     };
     runs.set(runId, run);
-    res.status(202).json({ run_id: runId, kind: 'mobile_' + target });
+    res.status(202).json({ run_id: runId, kind: 'mobile_' + target, build: newBuild });
   });
 
   // Mobile build download
   app.get('/api/projects/:id/mobile/builds/:build_id/download', (req: Request, res: Response) => {
-    res.setHeader('Content-Disposition', 'attachment; filename="app-testing.apk"');
-    res.setHeader('Content-Type', 'application/vnd.android.package-archive');
-    res.send(Buffer.from('MOCK_APK_BINARY_CONTENT'));
+    const project = projects.get(req.params.id);
+    const build = (project?.mobile_builds || []).find((b: any) => b.id === req.params.build_id);
+    const filename = build?.filename || 'app-testing.apk';
+    const contentType = filename.endsWith('.apk')
+      ? 'application/vnd.android.package-archive'
+      : filename.endsWith('.aab')
+      ? 'application/octet-stream'
+      : 'application/octet-stream';
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    res.setHeader('Content-Type', contentType);
+    res.send(Buffer.from(`MOCK_MOBILE_PACKAGE_CONTENT_FOR_${filename}`));
   });
 
   // Mobile build log
   app.get('/api/projects/:id/mobile/builds/:build_id/log', (req: Request, res: Response) => {
+    const project = projects.get(req.params.id);
+    const build = (project?.mobile_builds || []).find((b: any) => b.id === req.params.build_id);
+    const target = build?.target || 'apk';
     res.json({
-      log: `[Capacitor] Building Android package
-[Gradle] Task :app:assembleDebug SUCCESSFUL
-[Signer] Signed with debug keystore
-Artifact verified and packed.`,
+      log: `[Capacitor] Initializing native ${target.toUpperCase()} platform wrapper
+[Gradle] Running assembleRelease with target SDK 34
+[Assets] Bundling web app preview assets from ${build?.origin || 'production'}
+[Signer] Package signed successfully: ${build?.filename || 'app.apk'}
+[Verify] SHA-256 integrity checksum recorded: ${build?.sha256 || 'verified'}
+Artifact ready: ${build?.bytes ? (build.bytes / 1024 / 1024).toFixed(1) : '15.2'} MB`,
     });
   });
 

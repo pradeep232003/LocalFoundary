@@ -213,6 +213,12 @@ export function MobileView({
       <div className="mobile-targets">
         {['apk', 'aab', 'ipa'].map(target => {
           const info = capabilities?.[target];
+          const isAvailable = typeof info === 'boolean' ? info : Boolean(info?.available);
+          const blockers = Array.isArray(info?.blockers)
+            ? info.blockers
+            : typeof info?.blockers === 'string'
+              ? [info.blockers]
+              : [];
           const signingMissing =
             (target === 'ipa' && !/^[A-Z0-9]{10}$/.test(values.team_id)) ||
             (target === 'aab' &&
@@ -224,17 +230,19 @@ export function MobileView({
               <p>
                 {!info
                   ? 'Checking build tools…'
-                  : info.available
+                  : isAvailable
                     ? DESCRIPTIONS[target]
-                    : info.blockers.join(' ')}
+                    : blockers.length
+                      ? blockers.join(' ')
+                      : 'Build tools not configured on this host.'}
               </p>
               <button
                 className="primary"
-                disabled={disabled || !info?.available || signingMissing}
+                disabled={disabled || !isAvailable || signingMissing}
                 onClick={() => start(target)}>
-                {starting === target ? <Loader2 size={14} /> : <Play size={14} />}Build {target.toUpperCase()}
+                {starting === target ? <Loader2 size={14} className="spin" /> : <Play size={14} />}Build {target.toUpperCase()}
               </button>
-              {info?.available && signingMissing && (
+              {isAvailable && signingMissing && (
                 <small>
                   {target === 'ipa'
                     ? 'Enter an Apple Team ID to enable IPA builds.'
@@ -309,10 +317,16 @@ const DESCRIPTIONS = {
 export default function MobilePanel({ project, config, running, perform, launch }) {
   const [capabilities, setCapabilities] = useState(null);
   const [builds, setBuilds] = useState([]);
+  const defaultOrigin = project.preview_url
+    ? project.preview_url.startsWith('http')
+      ? project.preview_url
+      : window.location.origin + project.preview_url
+    : window.location.origin;
+  const cleanName = project.name.toLowerCase().replace(/[^a-z0-9]/g, '') || 'app';
   const [values, setValues] = useState({
-    origin: '',
+    origin: defaultOrigin,
     name: project.name.slice(0, 30),
-    app_id: '',
+    app_id: `com.foundry.${cleanName}`,
     version: '1.0.0',
     build_number: '1',
     team_id: '',
@@ -323,7 +337,7 @@ export default function MobilePanel({ project, config, running, perform, launch 
     key_alias: '',
     store_password: '',
     key_password: '',
-    allow_network: false,
+    allow_network: !config?.offline_only,
   });
   const [loading, setLoading] = useState(false);
   const [starting, setStarting] = useState('');
@@ -392,6 +406,7 @@ export default function MobilePanel({ project, config, running, perform, launch 
         build_number: Number(values.build_number),
         source_digest: project.source_digest,
       });
+      await refresh();
     } catch (e) {
       if (alive.current) setError(e.message);
     } finally {

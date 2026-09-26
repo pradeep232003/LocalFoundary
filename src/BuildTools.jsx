@@ -227,7 +227,7 @@ export default function BuildTools({
             <button disabled={running} onClick={onValidate}>
               Run all checks and journeys
             </button>
-            {project.journeys && (
+            {project.journeys && !Array.isArray(project.journeys) && Array.isArray(project.journeys.checks) && (
               <>
                 <p>
                   {project.journeys.status} ·{' '}
@@ -243,14 +243,35 @@ export default function BuildTools({
                 <small>{project.journeys.provider_checkout}</small>
               </>
             )}
+            {Array.isArray(project.journeys) && project.journeys.length > 0 && (
+              <div style={{ marginTop: '8px' }}>
+                {project.journeys.map((j, i) => (
+                  <div key={i} style={{ marginBottom: '6px' }}>
+                    <strong>{j.name || `Journey ${i + 1}`}</strong>: {j.status || 'passed'}
+                    {Array.isArray(j.checks) &&
+                      j.checks.map((c, ci) => (
+                        <p key={ci} style={{ margin: '2px 0 2px 12px' }}>
+                          {c.status} · {c.name}
+                        </p>
+                      ))}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
         <form
           className="visual-form"
           onSubmit={e => {
             e.preventDefault();
+            let parsedActions = [];
+            try {
+              parsedActions = actions ? JSON.parse(actions) : [];
+            } catch {
+              parsedActions = [];
+            }
             perform(() =>
-              launch(`/projects/${project.id}/visual`, { path, viewport, actions: JSON.parse(actions) }),
+              launch(`/projects/${project.id}/visual`, { path, viewport, actions: parsedActions }),
             );
           }}>
           <label>
