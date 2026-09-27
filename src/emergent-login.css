@@ -1,0 +1,226 @@
+/* Emergent.sh Landing & Login styling */
+.emergent-login-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(4, 8, 6, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+  animation: emergentFadeIn 0.25s ease-out;
+}
+
+@keyframes emergentFadeIn {
+  from { opacity: 0; transform: scale(0.98); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.emergent-login-card {
+  width: 100%;
+  max-width: 440px;
+  background: #0d1410;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(16, 185, 129, 0.15);
+  border-radius: 18px;
+  padding: 36px 32px 30px;
+  color: #f0fdf4;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.emergent-login-close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  background: rgba(255, 255, 255, 0.05);
+  border: none;
+  color: #8fa387;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.emergent-login-close:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #f0fdf4;
+}
+
+.emergent-brand-logo {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #041d0f;
+  margin: 0 auto;
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.35);
+}
+
+.emergent-login-header {
+  text-align: center;
+}
+
+.emergent-login-title {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  margin: 0 0 6px 0;
+}
+
+.emergent-login-subtitle {
+  font-size: 13px;
+  color: #8ea48b;
+  margin: 0;
+}
+
+.emergent-auth-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.emergent-oauth-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 18px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.emergent-oauth-btn.google {
+  background: #ffffff;
+  color: #1a202c;
+  border: 1px solid #e2e8f0;
+}
+
+.emergent-oauth-btn.google:hover {
+  background: #f7fafc;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.emergent-oauth-btn.secondary-oauth {
+  background: #141f17;
+  color: #d1ded0;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.emergent-oauth-btn.secondary-oauth:hover {
+  background: #1c2b21;
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.emergent-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: #556b54;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 4px 0;
+}
+
+.emergent-divider::before,
+.emergent-divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.emergent-divider:not(:empty)::before {
+  margin-right: 12px;
+}
+
+.emergent-divider:not(:empty)::after {
+  margin-left: 12px;
+}
+
+.emergent-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: left;
+}
+
+.emergent-input-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #a0b89c;
+}
+
+.emergent-input {
+  width: 100%;
+  background: #141f17;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 11px 14px;
+  color: #f0fdf4;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.emergent-input:focus {
+  border-color: #10b981;
+}
+
+.emergent-primary-btn {
+  background: #10b981;
+  color: #041d0f;
+  border: none;
+  border-radius: 8px;
+  padding: 12px;
+  font-weight: 800;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.15s;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.emergent-primary-btn:hover {
+  background: #34d399;
+}
+
+.emergent-footer-text {
+  font-size: 12px;
+  color: #7b9277;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.emergent-footer-text a,
+.emergent-footer-text button {
+  color: #34d399;
+  text-decoration: none;
+  font-weight: 600;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.emergent-footer-text a:hover,
+.emergent-footer-text button:hover {
+  text-decoration: underline;
+}

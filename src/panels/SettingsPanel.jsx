@@ -251,11 +251,21 @@ export default function SettingsPanel({ project, config, running, refresh, onOpe
             specifically for the <strong>{project.name}</strong> application in development.
           </p>
         </div>
-        <div style={{ display: 'flex', gap: '8px' }}>
-          <button onClick={loadEnv} disabled={loading} title="Reload environment variables">
-            <RefreshCw size={14} className={loading ? 'spin' : ''} /> Refresh
+        <div className="settings-header-actions">
+          <button
+            type="button"
+            className="settings-refresh-btn"
+            onClick={loadEnv}
+            disabled={loading}
+            title="Reload environment variables">
+            <RefreshCw size={14} className={loading ? 'spin' : ''} />
+            <span>{loading ? 'Refreshing…' : 'Refresh'}</span>
           </button>
-          <button className="primary" onClick={downloadEnvFile} title="Export variables to .env file">
+          <button
+            type="button"
+            className="primary"
+            onClick={downloadEnvFile}
+            title="Export variables to .env file">
             <Download size={14} /> Export .env
           </button>
         </div>
@@ -566,10 +576,13 @@ export default function SettingsPanel({ project, config, running, refresh, onOpe
               </button>
 
               <div className="btn-group">
-                <button onClick={() => setRawText(formatRawEnv(variables))}>
+                <button
+                  type="button"
+                  className="secondary"
+                  onClick={() => setRawText(formatRawEnv(variables))}>
                   Reset to Current
                 </button>
-                <button className="primary" onClick={handleApplyRawText}>
+                <button type="button" className="primary" onClick={handleApplyRawText}>
                   <Check size={14} /> Parse & Apply Changes
                 </button>
               </div>

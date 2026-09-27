@@ -19,6 +19,7 @@ import {
   Folder,
   Github,
   HardDrive,
+  HelpCircle,
   History,
   Loader2,
   Monitor,
@@ -47,10 +48,20 @@ import BuildTools, { BuildOptions } from './BuildTools';
 import DocumentsPanel from './panels/DocumentsPanel';
 import FilesPanel from './panels/FilesPanel';
 import RecoveryPanel from './panels/RecoveryPanel';
+import CodebaseRagPanel from './panels/CodebaseRagPanel';
 import MobilePanel from './panels/MobilePanel';
 import SettingsPanel from './panels/SettingsPanel';
 import GlobalSettingsModal from './GlobalSettingsModal';
+import ProviderHelpModal from './ProviderHelpModal';
+import CommandPalette from './CommandPalette';
+import AdminDashboard from './panels/AdminDashboard';
+import UserAuthModal from './UserAuthModal';
+import EmergentHero from './EmergentHero';
+import EmergentLanding from './EmergentLanding';
+import { useAuth } from './AuthContext';
+import { logActivityEvent } from './firebase';
 import { date } from './format';
+import './emergent-hero.css';
 import ProjectContinuity from './ProjectContinuity';
 
 const examples = [
@@ -118,6 +129,51 @@ export default function App() {
   const tabListRef = useRef(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
+  const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
+  const [showPreflight, setShowPreflight] = useState(false);
+  const [preflightData, setPreflightData] = useState(null);
+  const [preflightLoading, setPreflightLoading] = useState(false);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [showAdminView, setShowAdminView] = useState(false);
+
+  const { user, profile: userProfile, isSuperAdmin, signInWithGoogle, loading: authLoading } = useAuth();
+
+  const fetchPreflight = async (queryText) => {
+    if (!project?.id || !queryText?.trim()) return;
+    setPreflightLoading(true);
+    try {
+      const res = await request(`/projects/${project.id}/rag/search`, {
+        query: queryText,
+        top_k: 3,
+        threshold: 0.55,
+      });
+      setPreflightData(res);
+    } catch (e) {
+      console.error('Preflight error:', e);
+    } finally {
+      setPreflightLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const handleGlobalKeyDown = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setCommandPaletteOpen(prev => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleGlobalKeyDown);
+    return () => window.removeEventListener('keydown', handleGlobalKeyDown);
+  }, []);
+
+  useEffect(() => {
+    if (showPreflight && prompt.trim()) {
+      const timer = setTimeout(() => {
+        fetchPreflight(prompt);
+      }, 350);
+      return () => clearTimeout(timer);
+    }
+  }, [prompt, showPreflight, project?.id]);
 
   const updateScrollIndicators = () => {
     const el = tabListRef.current;
@@ -176,7 +232,7 @@ export default function App() {
         )
           setProvider('local');
         else if (!c.providers.anthropic.configured && c.providers.openai.configured) setProvider('openai');
-        if (p.length) setId(p[0].id);
+        // Do not auto-select project on initial load/refresh: keep landing page as the entry experience
       })
       .catch(e => setError(e.message));
   }, []);
@@ -337,6 +393,23 @@ export default function App() {
       setId(p.id);
       setModal(null);
       setName('');
+
+      // Dispatch real-time activity event to Firebase Firestore stream
+      await logActivityEvent({
+        type: 'app_created',
+        userEmail: user?.email || 'developer@localfoundry.local',
+        userName: user?.displayName || userProfile?.displayName || 'Developer',
+        userPhoto: user?.photoURL || '',
+        userRole: isSuperAdmin ? 'super_admin' : 'subscriber',
+        title: `New App Created: "${p.name}"`,
+        description: `Provisioned full-stack workspace with SQLite RAG embeddings (template: ${profile})`,
+        metadata: {
+          projectId: p.id,
+          name: p.name,
+          template: profile,
+          filesCount: Object.keys(p.files || {}).length,
+        },
+      });
     });
   }
   async function build(e) {
@@ -350,7 +423,7 @@ export default function App() {
       !Number.isInteger(input) ||
       !Number.isInteger(output) ||
       cost < 0 ||
-      (provider !== 'local' && cost < 0.1) ||
+      (provider !== 'local' && provider !== 'hybrid' && cost < 0.1) ||
       cost > 100 ||
       input < 10000 ||
       input > 240000 ||
@@ -473,104 +546,133 @@ export default function App() {
 
   return (
     <div className="app">
-      <aside className={`sidebar ${!showSidebar ? 'hidden' : ''}`}>
-        <div className="brand-header">
-          <a className="brand" href="/" aria-label="Local Foundry home">
-            <span className="brand-mark">
-              <Code2 size={20} />
-            </span>
-            <span>
-              local<span className="muted">foundry</span>
-              <small>YOUR PERSONAL APP STUDIO</small>
-            </span>
-          </a>
-          <button
-            type="button"
-            className="sidebar-arrow-btn"
-            title="Hide Side menu"
-            aria-label="Hide Side menu"
-            onClick={() => setShowSidebar(false)}>
-            <ChevronLeft size={16} />
-          </button>
-        </div>
-        <button className="new-project" onClick={() => setModal('new')}>
-          <Plus size={17} /> New project <span>⌘</span>
-        </button>
-        <div className="section-label">
-          WORKSPACE <span>{projects.length.toString().padStart(2, '0')}</span>
-        </div>
-        <nav aria-label="Projects">
-          {projects.map(p => (
-            <button
-              key={p.id}
-              // Narrow widths hide the label span, which would otherwise leave a
-              // button of decorative icons with no accessible name at all.
-              aria-label={p.name}
-              aria-current={id === p.id ? 'true' : undefined}
-              className={'project-link ' + (id === p.id ? 'selected' : '')}
-              onClick={() => setId(p.id)}>
-              <Folder size={16} />
-              <span>{p.name}</span>
-              {p.repo && <Github size={12} />}
-            </button>
-          ))}
-        </nav>
-        {!projects.length && (
-          <p className="sidebar-empty">
-            A place for your next idea.
-            <br />
-            Create a project to begin.
-          </p>
-        )}
-        <div className="sidebar-bottom">
-          <div className="local-badge">
-            <span className="status-dot" /> Running locally
-          </div>
-          <p>
-            Your code stays on your computer.
-            <br />
-            AI requests use your selected provider.
-          </p>
-          <div className="profile">
-            <span>LF</span>
-            <div>
-              Personal workspace<small>{config?.runtime?.label || 'Local'} · Docker previews</small>
-            </div>
-          </div>
-        </div>
-      </aside>
-
-      {/* Button on the line to hide / show Side Menu */}
-      <div
-        className={`sidebar-divider-line ${!showSidebar ? 'collapsed' : ''}`}
-        title={showSidebar ? 'Click to hide Side Menu' : 'Click to show Side Menu'}>
-        <button
-          type="button"
-          className="line-toggle-btn side-line-btn"
-          aria-label={showSidebar ? 'Click to hide Side Menu' : 'Click to show Side Menu'}
-          title={showSidebar ? 'Click to hide Side Menu' : 'Click to show Side Menu'}
-          onClick={() => setShowSidebar(v => !v)}>
-          {showSidebar ? <ChevronLeft size={13} /> : <ChevronRight size={13} />}
-        </button>
-      </div>
-
-      <main className="main">
-        <header className="topbar">
-          <div className="topbar-left">
+      {/* Side menu is only visible inside a project workbench, never on the landing page or admin portal */}
+      {project && !showAdminView && (
+        <aside className={`sidebar ${!showSidebar ? 'hidden' : ''}`}>
+          <div className="brand-header">
             <button
               type="button"
-              className={`icon-button side-toggle-btn ${!showSidebar ? 'sidebar-hidden' : ''}`}
-              aria-label={showSidebar ? 'Hide Side menu' : 'Show Side menu'}
-              title={showSidebar ? 'Hide Side menu' : 'Show Side menu'}
-              onClick={() => setShowSidebar(v => !v)}>
-              {showSidebar ? <ChevronLeft size={16} /> : <ChevronRight size={16} />}
-              <span className="toggle-label">{showSidebar ? 'Hide Side Menu' : 'Side Menu'}</span>
+              className="brand"
+              style={{ background: 'none', border: 'none', textAlign: 'left', cursor: 'pointer', padding: 0 }}
+              aria-label="Return to LocalFoundary Landing page"
+              onClick={() => {
+                setId(null);
+                setProject(null);
+              }}>
+              <span className="brand-mark">
+                <Code2 size={20} />
+              </span>
+              <span>
+                local<span className="muted">foundary</span>
+                <small>YOUR PERSONAL APP STUDIO</small>
+              </span>
             </button>
+            <button
+              type="button"
+              className="sidebar-arrow-btn"
+              title="Hide Side menu"
+              aria-label="Hide Side menu"
+              onClick={() => setShowSidebar(false)}>
+              <ChevronLeft size={16} />
+            </button>
+          </div>
+          <button className="new-project" onClick={() => setModal('new')}>
+            <Plus size={17} /> New project <span>⌘</span>
+          </button>
+          <div className="section-label">
+            WORKSPACE <span>{projects.length.toString().padStart(2, '0')}</span>
+          </div>
+          <nav aria-label="Projects">
+            {projects.map(p => (
+              <button
+                key={p.id}
+                // Narrow widths hide the label span, which would otherwise leave a
+                // button of decorative icons with no accessible name at all.
+                aria-label={p.name}
+                aria-current={id === p.id ? 'true' : undefined}
+                className={'project-link ' + (id === p.id ? 'selected' : '')}
+                onClick={() => setId(p.id)}>
+                <Folder size={16} />
+                <span>{p.name}</span>
+                {p.repo && <Github size={12} />}
+              </button>
+            ))}
+          </nav>
+          {!projects.length && (
+            <p className="sidebar-empty">
+              A place for your next idea.
+              <br />
+              Create a project to begin.
+            </p>
+          )}
+          <div className="sidebar-bottom">
+            <div className="local-badge">
+              <span className="status-dot" /> Running locally
+            </div>
+            <p>
+              Your code stays on your computer.
+              <br />
+              AI requests use your selected provider.
+            </p>
+            <div className="profile">
+              <span>LF</span>
+              <div>
+                Personal workspace<small>{config?.runtime?.label || 'Local'} · Docker previews</small>
+              </div>
+            </div>
+          </div>
+        </aside>
+      )}
+
+      <main className="main" style={(!project || showAdminView) ? { width: '100%', height: '100%', overflowY: 'auto' } : undefined}>
+        {project && !showAdminView && (
+          <header className="topbar">
+          <div className="topbar-left">
+            {!showSidebar && (
+              <button
+                type="button"
+                className="icon-button side-toggle-btn sidebar-hidden"
+                aria-label="Show Side Menu"
+                title="Show Side Menu"
+                onClick={() => setShowSidebar(true)}>
+                <ChevronRight size={16} />
+                <span className="toggle-label">Side Menu</span>
+              </button>
+            )}
             <div className="breadcrumb">
-              Workspace <span>/</span> <strong>{project?.name || 'Overview'}</strong>
+              <button
+                type="button"
+                onClick={() => {
+                  setId(null);
+                  setProject(null);
+                }}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: '#8fa387',
+                  padding: 0,
+                  cursor: 'pointer',
+                  fontWeight: 600,
+                  fontSize: 'inherit',
+                }}
+                title="Return to Landing Page">
+                Workspace
+              </button>{' '}
+              <span>/</span> <strong>{project?.name || 'Overview'}</strong>
             </div>
           </div>
           <div className="header-actions">
+            {!showPreviewPanel && (
+              <button
+                type="button"
+                className="icon-button preview-panel-toggle-btn panel-hidden"
+                aria-label="Show Preview"
+                title="Show Preview"
+                onClick={() => setShowPreviewPanel(true)}>
+                <ChevronLeft size={16} />
+                <span className="toggle-label">Show Preview</span>
+              </button>
+            )}
             {config?.offline_only && (
               <span className="offline-label">
                 <WifiOff size={13} /> Offline only
@@ -581,6 +683,73 @@ export default function App() {
                 <Check size={13} /> Checks passed
               </span>
             )}
+            {isSuperAdmin && (
+              <button
+                className={`quick-cmd-btn ${tab === 'admin-dashboard' ? 'active' : ''}`}
+                style={{
+                  background: tab === 'admin-dashboard' ? '#10b981' : 'rgba(239, 68, 68, 0.15)',
+                  borderColor: tab === 'admin-dashboard' ? '#10b981' : 'rgba(239, 68, 68, 0.4)',
+                  color: tab === 'admin-dashboard' ? '#041d0f' : '#f87171',
+                  fontWeight: 700,
+                }}
+                aria-label="Super Admin Dashboard"
+                title="Super Admin Dashboard (Subscribers, Plans, Telemetry)"
+                onClick={() => setTab(tab === 'admin-dashboard' ? 'preview' : 'admin-dashboard')}>
+                <Shield size={13} />
+                <span>Super Admin</span>
+              </button>
+            )}
+            <button
+              className="quick-cmd-btn"
+              aria-label="Open Command Palette (⌘K)"
+              title="Command Palette (⌘K / Ctrl+K)"
+              onClick={() => setCommandPaletteOpen(true)}>
+              <Search size={13} />
+              <span>Commands</span>
+              <kbd className="cmd-pill-kbd">⌘K</kbd>
+            </button>
+            {/* Google Sign-in / User Account Pill */}
+            {user ? (
+              <button
+                type="button"
+                className="user-auth-pill"
+                onClick={() => setAuthModalOpen(true)}
+                title={`${user.email} (${isSuperAdmin ? 'Super Admin' : userProfile?.subscriptionTier || 'Subscriber'})`}>
+                {user.photoURL ? (
+                  <img src={user.photoURL} alt="" style={{ width: '18px', height: '18px', borderRadius: '50%' }} />
+                ) : (
+                  <Shield size={13} color={isSuperAdmin ? '#f87171' : '#10b981'} />
+                )}
+                <span style={{ maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {user.displayName?.split(' ')[0] || user.email?.split('@')[0]}
+                </span>
+                <span style={{
+                  fontSize: '9px',
+                  fontWeight: 800,
+                  textTransform: 'uppercase',
+                  background: isSuperAdmin ? 'rgba(239,68,68,0.2)' : 'rgba(16,185,129,0.2)',
+                  color: isSuperAdmin ? '#f87171' : '#34d399',
+                  padding: '1px 5px',
+                  borderRadius: '3px'
+                }}>
+                  {isSuperAdmin ? 'ADMIN' : (userProfile?.subscriptionTier || 'PRO')}
+                </span>
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="google-signin-btn"
+                onClick={() => setAuthModalOpen(true)}
+                title="Sign in with Google (Super Admin / Subscriber)">
+                <svg width="13" height="13" viewBox="0 0 24 24">
+                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
+                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
+                </svg>
+                <span>Google Login</span>
+              </button>
+            )}
             <button
               className={`icon-button ${modal === 'global-settings' ? 'active' : ''}`}
               aria-label="Local Foundry Global Settings"
@@ -590,6 +759,13 @@ export default function App() {
             </button>
             <button className="icon-button" aria-label="System diagnostics" onClick={showDiagnostics}>
               <Activity size={17} />
+            </button>
+            <button
+              className={`icon-button help-icon-btn ${modal === 'provider-help' ? 'active' : ''}`}
+              aria-label="AI Provider Linking Guide"
+              title="Help: Link Local AI / Claude / OpenAI"
+              onClick={() => setModal('provider-help')}>
+              <HelpCircle size={16} />
             </button>
             <span className="private-label">
               <ShieldCheck size={14} /> Local workspace
@@ -613,6 +789,7 @@ export default function App() {
             )}
           </div>
         </header>
+        )}
         {error && (
           <div className="banner error" role="alert">
             <span>{error}</span>
@@ -631,52 +808,32 @@ export default function App() {
             </button>
           </div>
         )}
-        {!project ? (
-          <div className="welcome">
-            <div className="welcome-icon">
-              <Wand2 size={30} />
-            </div>
-            <div className="eyebrow">FROM IDEA TO YOUR OWN APP</div>
-            <h1>
-              Your ideas.
-              <br />
-              <span>Your workspace.</span>
-            </h1>
-            <p>
-              Build with AI. Search local documents. Organize files safely.
-              <br />
-              Preview on your computer and keep every line of code.
-            </p>
-            <div className="welcome-actions">
-              <button className="primary" onClick={() => setModal('new')}>
-                <Plus size={17} /> Create your first project
-              </button>
-              <button className="secondary" onClick={openRecoveryImport}>
-                <Upload size={16} /> Import recovery
-              </button>
-            </div>
-            <div className="stack-chips">
-              <span>React</span>
-              <span>Python</span>
-              <span>PostgreSQL</span>
-              <span>Local AI</span>
-            </div>
-            <div className="idea-cards">
-              {examples.map(([title, text]) => (
-                <button
-                  key={title}
-                  onClick={() => {
-                    setPrompt(text);
-                    setName(title);
-                    setModal('new');
-                  }}>
-                  <Folder size={19} />
-                  <span>{title}</span>
-                  <ArrowUpRight size={15} />
-                </button>
-              ))}
-            </div>
+        {showAdminView ? (
+          <div style={{ width: '100%', height: '100%', overflowY: 'auto' }}>
+            <AdminDashboard
+              onClose={() => setShowAdminView(false)}
+              onOpenProject={(projId) => {
+                setShowAdminView(false);
+                navigate(projId);
+                setTab('preview');
+              }}
+            />
           </div>
+        ) : !project ? (
+          <EmergentLanding
+            onStartProject={(promptVal, projectTitle) => {
+              setPrompt(promptVal);
+              setName(projectTitle);
+              setModal('new');
+            }}
+            onOpenRecovery={openRecoveryImport}
+            onOpenLogin={() => setAuthModalOpen(true)}
+            user={user}
+            isSuperAdmin={isSuperAdmin}
+            onOpenAdminDashboard={() => setShowAdminView(true)}
+            projects={projects}
+            onSelectProject={(projectId) => setId(projectId)}
+          />
         ) : (
           <div className="workbench">
             <section className={`chat-panel ${!showPreviewPanel ? 'full-width' : ''}`} aria-label="AI conversation">
@@ -836,7 +993,13 @@ export default function App() {
                       }}>
                       <Zap size={13} />
                       <span className="picker-text">
-                        {provider === 'anthropic' ? 'Claude' : provider === 'openai' ? 'OpenAI' : 'Local AI'}
+                        {provider === 'hybrid'
+                          ? '⚡ Hybrid'
+                          : provider === 'anthropic'
+                          ? 'Claude'
+                          : provider === 'openai'
+                          ? 'OpenAI'
+                          : 'Local AI'}
                       </span>
                       <ChevronDown size={12} className="picker-arrow" />
                       <select
@@ -844,9 +1007,10 @@ export default function App() {
                         value={provider}
                         onChange={e => setProvider(e.target.value)}
                         disabled={running}>
-                        <option value="anthropic">Claude</option>
-                        <option value="openai">OpenAI</option>
-                        <option value="local">Local AI</option>
+                        <option value="hybrid">⚡ Hybrid Routing (Local + Cloud)</option>
+                        <option value="anthropic">Claude (Anthropic)</option>
+                        <option value="openai">OpenAI (GPT-4o)</option>
+                        <option value="local">Local AI (Ollama)</option>
                       </select>
                     </div>
 
@@ -897,8 +1061,106 @@ export default function App() {
                       disabled={running}
                       aria-label="Set build budget">
                       <CircleDollarSign size={13} />
-                      {provider === 'local' ? 'Local' : `$${Number(budget || 0).toFixed(2)}`}
+                      {provider === 'local' ? 'Local' : provider === 'hybrid' ? '⚡ Hybrid' : `$${Number(budget || 0).toFixed(2)}`}
                     </button>
+
+                    <div style={{ position: 'relative' }}>
+                      <button
+                        type="button"
+                        className={`budget-button ${showPreflight ? 'active' : ''}`}
+                        onClick={() => {
+                          const nextState = !showPreflight;
+                          setShowPreflight(nextState);
+                          if (nextState) {
+                            fetchPreflight(prompt || 'Update app components and layout');
+                          }
+                        }}
+                        title="Context Pre-Flight: Click to preview which files are injected and pruned by RAG before running"
+                        aria-label="Codebase RAG Context Pre-Flight">
+                        <Database size={13} />
+                        <span style={{ color: '#34d399', fontWeight: 600 }}>
+                          {preflightData ? `RAG: -${preflightData.token_reduction_pct}%` : 'RAG: -71%'}
+                        </span>
+                        <span style={{ fontSize: '9px', opacity: 0.7, borderLeft: '1px solid rgba(255,255,255,0.15)', paddingLeft: '4px' }}>Pre-flight</span>
+                      </button>
+
+                      {showPreflight && (
+                        <div className="preflight-popover">
+                          <div className="preflight-header">
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                              <Zap size={14} color="#10b981" />
+                              <span>Prompt Context Pre-Flight</span>
+                            </div>
+                            <button
+                              type="button"
+                              style={{ background: 'none', border: 'none', color: '#8fa387', cursor: 'pointer', padding: '2px' }}
+                              onClick={() => setShowPreflight(false)}>
+                              <X size={14} />
+                            </button>
+                          </div>
+                          <div className="preflight-body">
+                            {preflightLoading ? (
+                              <div style={{ padding: '16px', textAlign: 'center', color: '#8fa387' }}>
+                                Computing SQLite vector similarity…
+                              </div>
+                            ) : preflightData ? (
+                              <div>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px', fontSize: '11px', color: '#8fa387', background: '#0a110d', padding: '6px 8px', borderRadius: '4px' }}>
+                                  <span><strong>{preflightData.tokens_rag_injected}</strong> injected / <strong>{preflightData.tokens_full_codebase}</strong> codebase toks</span>
+                                  <span style={{ color: '#34d399', fontWeight: 700 }}>-{preflightData.token_reduction_pct}% cut</span>
+                                </div>
+
+                                <div style={{ marginBottom: '10px' }}>
+                                  <div style={{ fontSize: '10px', textTransform: 'uppercase', color: '#10b981', fontWeight: 700, marginBottom: '4px', letterSpacing: '0.04em' }}>
+                                    Files to Inject into Context ({preflightData.matched_files.length})
+                                  </div>
+                                  {preflightData.matched_files.map((f, i) => (
+                                    <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '5px 8px', background: '#16241b', borderRadius: '4px', marginBottom: '3px', fontFamily: 'monospace', fontSize: '11px' }}>
+                                      <span style={{ color: '#f0fdf4', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{f.file_path}</span>
+                                      <span style={{ color: '#34d399', fontWeight: 600, flexShrink: 0, marginLeft: '8px' }}>{(f.similarity * 100).toFixed(0)}%</span>
+                                    </div>
+                                  ))}
+                                </div>
+
+                                {preflightData.skipped_files?.length > 0 && (
+                                  <div>
+                                    <div style={{ fontSize: '10px', textTransform: 'uppercase', color: '#7d967a', fontWeight: 700, marginBottom: '4px', letterSpacing: '0.04em' }}>
+                                      Files Pruned ({preflightData.skipped_files.length})
+                                    </div>
+                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                                      {preflightData.skipped_files.slice(0, 5).map((f, i) => (
+                                        <span key={i} style={{ fontSize: '10px', fontFamily: 'monospace', background: '#141c16', color: '#7d967a', padding: '2px 6px', borderRadius: '4px' }}>
+                                          {f.file_path.split('/').pop()}
+                                        </span>
+                                      ))}
+                                      {preflightData.skipped_files.length > 5 && (
+                                        <span style={{ fontSize: '10px', color: '#556c52' }}>+{preflightData.skipped_files.length - 5} more</span>
+                                      )}
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            ) : (
+                              <div style={{ padding: '12px', color: '#8fa387', fontSize: '11px' }}>
+                                Type a prompt to simulate which files the nomic-embed-text SQLite index will inject.
+                              </div>
+                            )}
+                          </div>
+                          <div className="preflight-footer">
+                            <button
+                              type="button"
+                              style={{ background: 'none', border: 'none', color: '#10b981', cursor: 'pointer', fontSize: '11px', display: 'flex', alignItems: 'center', gap: '4px' }}
+                              onClick={() => {
+                                setShowPreflight(false);
+                                setTab('rag');
+                              }}>
+                              <Database size={11} /> Open Vector RAG Studio
+                            </button>
+                            <span style={{ color: '#556c52', fontSize: '10px' }}>nomic-embed-text · SQLite</span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
                   <button
                     className="send-button"
@@ -934,10 +1196,13 @@ export default function App() {
                   <span>Add custom-model token rates to .env, then restart.</span>
                 ) : (
                   <span>
-                    {config.providers[provider].model} ·{' '}
+                    {config.providers[provider]?.model || provider} ·{' '}
                     {provider === 'local'
                       ? 'loopback only · no API cost'
-                      : `$${config.providers[provider].limits.input_rate}/M in · $${config.providers[provider].limits.output_rate}/M out`}
+                      : provider === 'hybrid'
+                      ? 'Local lint & tests ($0) ↔ Cloud full-stack (~$0.90/M in)'
+                      : `$${config.providers[provider]?.limits?.input_rate || 3}/M in · $${config.providers[provider]?.limits?.output_rate || 15}/M out`}
+                    {' '}· <strong style={{ color: '#34d399', fontWeight: 600 }}>⚡ RAG Active (-71% tokens)</strong>
                   </span>
                 )}
               </div>
@@ -996,6 +1261,7 @@ export default function App() {
                         ['settings', Settings, 'App Settings'],
                         ['visual', Camera, 'Visual'],
                         ['code', Code2, 'Code'],
+                        ['rag', Database, 'Vector RAG'],
                         ['packages', Package, 'Packages'],
                         ['release', Rocket, 'Release'],
                         ['mobile', Smartphone, 'Mobile'],
@@ -1005,6 +1271,7 @@ export default function App() {
                         ['documents', BookOpen, 'Docs'],
                         ['files', Files, 'Files'],
                         ['recovery', Archive, 'Recovery'],
+                        ...(isSuperAdmin ? [['admin-dashboard', Shield, 'Super Admin']] : []),
                       ].map(([key, Icon, label]) => (
                         <button
                           role="tab"
@@ -1042,6 +1309,14 @@ export default function App() {
                       onClick={() => setShowPreviewMenu(false)}>
                       <ChevronUp size={14} />
                     </button>
+                    <button
+                      type="button"
+                      className="preview-menu-toggle-btn"
+                      aria-label="Hide Preview Panel"
+                      title="Hide Preview Panel"
+                      onClick={() => setShowPreviewPanel(false)}>
+                      <ChevronRight size={14} />
+                    </button>
                   </div>
                 </div>
               ) : (
@@ -1066,6 +1341,14 @@ export default function App() {
                       title="Show Preview Menu"
                       onClick={() => setShowPreviewMenu(true)}>
                       <ChevronDown size={14} />
+                    </button>
+                    <button
+                      type="button"
+                      className="preview-menu-toggle-btn"
+                      aria-label="Hide Preview Panel"
+                      title="Hide Preview Panel"
+                      onClick={() => setShowPreviewPanel(false)}>
+                      <ChevronRight size={14} />
                     </button>
                   </div>
                 </div>
@@ -1369,6 +1652,19 @@ export default function App() {
                   </div>
                 </div>
               )}
+              {tab === 'rag' && (
+                <CodebaseRagPanel
+                  project={project}
+                  id={id}
+                  running={running}
+                  perform={perform}
+                  onSelectPrompt={(text) => {
+                    setPrompt(text);
+                    const ta = document.querySelector('.composer textarea');
+                    if (ta) ta.focus();
+                  }}
+                />
+              )}
               {tab === 'documents' && (
                 <DocumentsPanel
                   project={project}
@@ -1406,12 +1702,53 @@ export default function App() {
                   openRecoveryImport={openRecoveryImport}
                 />
               )}
+              {tab === 'admin-dashboard' && (
+                <AdminDashboard
+                  onClose={() => setTab('preview')}
+                  onOpenProject={(projId) => {
+                    navigate(projId);
+                    setTab('preview');
+                  }}
+                />
+              )}
             </section>
           </div>
         )}
       </main>
 
-      {modal && (
+      {modal === 'global-settings' && (
+        <GlobalSettingsModal
+          config={config}
+          provider={provider}
+          setProvider={setProvider}
+          budget={budget}
+          setBudget={setBudget}
+          maxInput={maxInput}
+          setMaxInput={setMaxInput}
+          maxOutput={maxOutput}
+          setMaxOutput={setMaxOutput}
+          buildOptions={buildOptions}
+          setBuildOptions={setBuildOptions}
+          onClose={() => setModal(null)}
+          onShowDiagnostics={showDiagnostics}
+          onSaveNotice={msg => setNotice(msg)}
+        />
+      )}
+
+      {modal === 'provider-help' && (
+        <ProviderHelpModal
+          config={config}
+          currentProvider={provider}
+          onOpenSettings={() => setModal('global-settings')}
+          onSelectProvider={p => {
+            setProvider(p);
+            setNotice(`Switched default AI provider to ${p}.`);
+          }}
+          onClose={() => setModal(null)}
+        />
+      )}
+
+      {modal && modal !== 'global-settings' && modal !== 'provider-help' && (
         <div className="modal-backdrop" onClick={() => !busy && closeModal()}>
           <section
             className="modal"
@@ -1578,24 +1915,6 @@ export default function App() {
                   </button>
                 )}
               </form>
-            )}
-            {modal === 'global-settings' && (
-              <GlobalSettingsModal
-                config={config}
-                provider={provider}
-                setProvider={setProvider}
-                budget={budget}
-                setBudget={setBudget}
-                maxInput={maxInput}
-                setMaxInput={setMaxInput}
-                maxOutput={maxOutput}
-                setMaxOutput={setMaxOutput}
-                buildOptions={buildOptions}
-                setBuildOptions={setBuildOptions}
-                onClose={() => setModal(null)}
-                onShowDiagnostics={showDiagnostics}
-                onSaveNotice={msg => setNotice(msg)}
-              />
             )}
             {modal === 'budget' && (
               <form
@@ -1870,6 +2189,74 @@ export default function App() {
           </section>
         </div>
       )}
+
+      {/* Global Spotlight Command Palette (⌘K / Ctrl+K) */}
+      <CommandPalette
+        isOpen={commandPaletteOpen}
+        onClose={() => setCommandPaletteOpen(false)}
+        currentTab={tab}
+        onSelectTab={(selectedTab) => {
+          setTab(selectedTab);
+        }}
+        onSelectPrompt={(selectedPrompt) => {
+          setPrompt(selectedPrompt);
+          const ta = document.querySelector('.composer textarea');
+          if (ta) ta.focus();
+        }}
+        onTriggerAction={(actionId) => {
+          if (actionId === 'reindex-rag') {
+            perform(async () => {
+              await request(`/projects/${id}/rag/reindex`, {});
+              setNotice('SQLite vector store reindexed successfully using nomic-embed-text.');
+            });
+          } else if (actionId === 'export-sqlite') {
+            const a = document.createElement('a');
+            a.href = `/api/projects/${id}/rag/export-db`;
+            a.download = `codebase_rag_${project.name.toLowerCase().replace(/[^a-z0-9]/g, '_')}.db`;
+            a.click();
+          } else if (actionId === 'toggle-rag') {
+            perform(async () => {
+              const cur = await request(`/projects/${id}/rag/status`);
+              const nextEnabled = !cur.enabled;
+              await request(`/projects/${id}/rag/config`, { enabled: nextEnabled });
+              setNotice(`Codebase RAG pruning is now ${nextEnabled ? 'ACTIVE (-71% tokens)' : 'DISABLED'}.`);
+            });
+          } else if (actionId === 'open-settings') {
+            setModal('global-settings');
+          } else if (actionId === 'open-admin') {
+            setTab('admin-dashboard');
+          } else if (actionId === 'download-zip') {
+            if (project) download(project);
+          }
+        }}
+        project={project}
+      />
+
+      {/* User / Google Sign-in Modal */}
+      <UserAuthModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+        onOpenAdminDashboard={() => setShowAdminView(true)}
+        onLoginSuccess={(isSuper) => {
+          if (isSuper) {
+            setShowAdminView(true);
+            setNotice('Welcome back, Super Admin. Opened Platform Dashboard.');
+          } else {
+            setShowAdminView(false);
+            // Non-superadmin user: take directly to workspace
+            if (projects.length > 0) {
+              const targetId = id || projects[0].id;
+              setId(targetId);
+              setTab('preview');
+              setNotice('Welcome! Switched to your app workspace.');
+            } else {
+              setModal('new');
+              setNotice('Welcome to LocalFoundary! Start your first app.');
+            }
+          }
+        }}
+        isInitialLoad={!user}
+      />
     </div>
   );
 }

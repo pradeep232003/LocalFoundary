@@ -15,6 +15,55 @@
   padding-bottom: 18px;
 }
 
+.settings-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.settings-refresh-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #19271e;
+  border: 1px solid #364e3c;
+  color: #c5dcbf;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 9px 15px;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: all 0.16s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+}
+
+.settings-refresh-btn:hover:not(:disabled) {
+  background: #23382b;
+  border-color: #537d5c;
+  color: #eefbee;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+.settings-refresh-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.settings-refresh-btn svg {
+  color: #79df85;
+  flex-shrink: 0;
+}
+
+.settings-header-actions .primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 15px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
 .settings-heading h2 {
   margin: 6px 0 8px;
   font-size: 22px;

@@ -1,0 +1,59 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isSuperAdmin() {
+      return isAuthenticated() && (
+        request.auth.token.email == 'pradeep.verghise@gmail.com' ||
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'super_admin'
+      );
+    }
+
+    // User profiles: Users can read their own profile, super admin can read/write any
+    match /users/{userId} {
+      allow read: if isAuthenticated() && (isOwner(userId) || isSuperAdmin());
+      allow create, update: if isAuthenticated() && (isOwner(userId) || isSuperAdmin());
+      allow delete: if isSuperAdmin();
+    }
+
+    // Subscription Plans: Anyone authenticated can read plans, only super admin can manage
+    match /plans/{planId} {
+      allow read: if isAuthenticated();
+      allow write: if isSuperAdmin();
+    }
+
+    // Tenants / Subscriptions: Super admin can read & write, tenant owner can read
+    match /tenants/{tenantId} {
+      allow read: if isAuthenticated() && (
+        isSuperAdmin() ||
+        resource.data.ownerUid == request.auth.uid ||
+        resource.data.ownerEmail == request.auth.token.email
+      );
+      allow write: if isSuperAdmin();
+    }
+
+    // System audit logs & Real-time platform activities:
+    // Any authenticated user can append an activity event (app created, login recorded)
+    // Super admins can read and stream all events
+    match /audit_logs/{logId} {
+      allow read: if isSuperAdmin();
+      allow create: if isAuthenticated();
+      allow update, delete: if isSuperAdmin();
+    }
+
+    match /activity_events/{eventId} {
+      allow read: if isSuperAdmin();
+      allow create: if isAuthenticated();
+      allow update, delete: if isSuperAdmin();
+    }
+  }
+}
