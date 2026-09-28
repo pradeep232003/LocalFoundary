@@ -24,6 +24,7 @@ import {
   ArrowRight,
   SlidersHorizontal,
   Shield,
+  Bot,
 } from 'lucide-react';
 import './command-palette.css';
 
@@ -59,6 +60,15 @@ export default function CommandPalette({
 
   // Quick Action items
   const actionItems = [
+    {
+      id: 'act-agent-builder',
+      category: 'Actions',
+      icon: Bot,
+      label: 'Agent Studio & Everyday Agents',
+      sub: 'Build, automate, and test AI agents for shopping, best prices, holidays, and social posts',
+      badge: 'New',
+      action: () => onTriggerAction('open-agent-builder'),
+    },
     {
       id: 'act-super-admin',
       category: 'Actions',

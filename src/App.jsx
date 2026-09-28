@@ -5,6 +5,7 @@ import {
   ArrowUp,
   ArrowUpRight,
   BookOpen,
+  Bot,
   Check,
   ChevronDown,
   ChevronLeft,
@@ -34,6 +35,7 @@ import {
   Settings,
   SlidersHorizontal,
   Smartphone,
+  Shield,
   ShieldCheck,
   Square,
   Terminal,
@@ -55,6 +57,7 @@ import GlobalSettingsModal from './GlobalSettingsModal';
 import ProviderHelpModal from './ProviderHelpModal';
 import CommandPalette from './CommandPalette';
 import AdminDashboard from './panels/AdminDashboard';
+import AgentBuilder from './AgentBuilder';
 import UserAuthModal from './UserAuthModal';
 import EmergentHero from './EmergentHero';
 import EmergentLanding from './EmergentLanding';
@@ -135,6 +138,8 @@ export default function App() {
   const [preflightLoading, setPreflightLoading] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [showAdminView, setShowAdminView] = useState(false);
+  const [showAgentBuilder, setShowAgentBuilder] = useState(false);
+  const [postLoginAction, setPostLoginAction] = useState(null);
 
   const { user, profile: userProfile, isSuperAdmin, signInWithGoogle, loading: authLoading } = useAuth();
 
@@ -195,6 +200,22 @@ export default function App() {
     }
   }, [tab]);
 
+  // Authentication guard: only redirect away if user is explicitly authenticated under a non-admin account
+  useEffect(() => {
+    if (!authLoading && user && !isSuperAdmin) {
+      if (showAdminView || tab === 'admin-dashboard') {
+        setShowAdminView(false);
+        if (tab === 'admin-dashboard') {
+          setTab('preview');
+        }
+        if (projects.length > 0 && !id) {
+          setId(projects[0].id);
+        }
+        setNotice(`Access restricted: Super admin privileges required. Current account: ${user.email}`);
+      }
+    }
+  }, [authLoading, user, isSuperAdmin, showAdminView, tab, projects, id]);
+
   const scrollTabs = (direction) => {
     if (tabListRef.current) {
       tabListRef.current.scrollBy({ left: direction * 180, behavior: 'smooth' });
@@ -220,6 +241,41 @@ export default function App() {
     if (selectedId.current === projectId) setProject(data);
     return data;
   }
+
+  const handleReturnToAppBuilder = async (targetProjectId) => {
+    setShowAdminView(false);
+    setTab('preview');
+    setShowPreviewPanel(true);
+
+    if (targetProjectId) {
+      setId(targetProjectId);
+      return;
+    }
+
+    if (id && project) {
+      return;
+    }
+
+    // Ensure we load an active project workspace so the workbench renders instead of the landing page
+    let currentProjects = projects;
+    if (!currentProjects || currentProjects.length === 0) {
+      currentProjects = await refreshList().catch(() => []);
+    }
+
+    if (currentProjects && currentProjects.length > 0) {
+      setId(currentProjects[0].id);
+      return;
+    }
+
+    // If no projects exist in the workspace, automatically initialize the initial workspace app
+    try {
+      const p = await request('/projects', { name: 'My App Workspace', profile: 'accounts' });
+      await refreshList();
+      setId(p.id);
+    } catch (err) {
+      console.warn('Auto-provisioning workspace failed:', err);
+    }
+  };
   useEffect(() => {
     Promise.all([request('/config'), refreshList()])
       .then(([c, p]) => {
@@ -547,7 +603,7 @@ export default function App() {
   return (
     <div className="app">
       {/* Side menu is only visible inside a project workbench, never on the landing page or admin portal */}
-      {project && !showAdminView && (
+      {project && !showAdminView && !showAgentBuilder && (
         <aside className={`sidebar ${!showSidebar ? 'hidden' : ''}`}>
           <div className="brand-header">
             <button
@@ -579,6 +635,31 @@ export default function App() {
           <button className="new-project" onClick={() => setModal('new')}>
             <Plus size={17} /> New project <span>⌘</span>
           </button>
+          <div style={{ padding: '0 8px 8px 8px' }}>
+            <button
+              type="button"
+              className="sidebar-agent-link"
+              style={{
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                background: 'rgba(16, 185, 129, 0.1)',
+                color: '#34d399',
+                border: '1px solid rgba(16, 185, 129, 0.25)',
+                borderRadius: '6px',
+                padding: '7px 10px',
+                fontSize: '12px',
+                fontWeight: 700,
+                cursor: 'pointer',
+                textAlign: 'left',
+              }}
+              title="Launch Agent Studio: Build everyday shopping, travel, and social AI agents"
+              onClick={() => setShowAgentBuilder(true)}>
+              <Bot size={14} />
+              <span>🤖 Agent Builder</span>
+            </button>
+          </div>
           <div className="section-label">
             WORKSPACE <span>{projects.length.toString().padStart(2, '0')}</span>
           </div>
@@ -624,8 +705,8 @@ export default function App() {
         </aside>
       )}
 
-      <main className="main" style={(!project || showAdminView) ? { width: '100%', height: '100%', overflowY: 'auto' } : undefined}>
-        {project && !showAdminView && (
+      <main className="main" style={(!project || showAdminView || showAgentBuilder) ? { width: '100%', height: '100%', overflowY: 'auto' } : undefined}>
+        {project && !showAdminView && !showAgentBuilder && (
           <header className="topbar">
           <div className="topbar-left">
             {!showSidebar && (
@@ -662,17 +743,6 @@ export default function App() {
             </div>
           </div>
           <div className="header-actions">
-            {!showPreviewPanel && (
-              <button
-                type="button"
-                className="icon-button preview-panel-toggle-btn panel-hidden"
-                aria-label="Show Preview"
-                title="Show Preview"
-                onClick={() => setShowPreviewPanel(true)}>
-                <ChevronLeft size={16} />
-                <span className="toggle-label">Show Preview</span>
-              </button>
-            )}
             {config?.offline_only && (
               <span className="offline-label">
                 <WifiOff size={13} /> Offline only
@@ -683,22 +753,21 @@ export default function App() {
                 <Check size={13} /> Checks passed
               </span>
             )}
-            {isSuperAdmin && (
-              <button
-                className={`quick-cmd-btn ${tab === 'admin-dashboard' ? 'active' : ''}`}
-                style={{
-                  background: tab === 'admin-dashboard' ? '#10b981' : 'rgba(239, 68, 68, 0.15)',
-                  borderColor: tab === 'admin-dashboard' ? '#10b981' : 'rgba(239, 68, 68, 0.4)',
-                  color: tab === 'admin-dashboard' ? '#041d0f' : '#f87171',
-                  fontWeight: 700,
-                }}
-                aria-label="Super Admin Dashboard"
-                title="Super Admin Dashboard (Subscribers, Plans, Telemetry)"
-                onClick={() => setTab(tab === 'admin-dashboard' ? 'preview' : 'admin-dashboard')}>
-                <Shield size={13} />
-                <span>Super Admin</span>
-              </button>
-            )}
+            <button
+              type="button"
+              className="quick-cmd-btn"
+              style={{
+                background: 'rgba(16, 185, 129, 0.12)',
+                borderColor: 'rgba(16, 185, 129, 0.35)',
+                color: '#34d399',
+                fontWeight: 700,
+              }}
+              aria-label="Open Agent Builder"
+              title="Launch Agent Studio: Build everyday shopping, travel, and social AI agents"
+              onClick={() => setShowAgentBuilder(true)}>
+              <Bot size={13} />
+              <span>Agent Builder</span>
+            </button>
             <button
               className="quick-cmd-btn"
               aria-label="Open Command Palette (⌘K)"
@@ -811,26 +880,47 @@ export default function App() {
         {showAdminView ? (
           <div style={{ width: '100%', height: '100%', overflowY: 'auto' }}>
             <AdminDashboard
-              onClose={() => setShowAdminView(false)}
-              onOpenProject={(projId) => {
-                setShowAdminView(false);
-                navigate(projId);
-                setTab('preview');
-              }}
+              onClose={() => handleReturnToAppBuilder()}
+              onOpenProject={(projId) => handleReturnToAppBuilder(projId)}
+              projects={projects}
             />
           </div>
+        ) : showAgentBuilder ? (
+          <AgentBuilder
+            onReturnToAppBuilder={() => setShowAgentBuilder(false)}
+            user={user}
+          />
         ) : !project ? (
           <EmergentLanding
             onStartProject={(promptVal, projectTitle) => {
+              if (!user) {
+                setPrompt(promptVal);
+                setName(projectTitle);
+                setAuthModalOpen(true);
+                return;
+              }
               setPrompt(promptVal);
               setName(projectTitle);
               setModal('new');
             }}
             onOpenRecovery={openRecoveryImport}
-            onOpenLogin={() => setAuthModalOpen(true)}
+            onOpenLogin={(intent) => {
+              if (intent) {
+                setPostLoginAction(intent);
+              }
+              setAuthModalOpen(true);
+            }}
             user={user}
             isSuperAdmin={isSuperAdmin}
             onOpenAdminDashboard={() => setShowAdminView(true)}
+            onOpenAgentBuilder={() => {
+              if (!user) {
+                setPostLoginAction('agent-builder');
+                setAuthModalOpen(true);
+              } else {
+                setShowAgentBuilder(true);
+              }
+            }}
             projects={projects}
             onSelectProject={(projectId) => setId(projectId)}
           />
@@ -842,24 +932,17 @@ export default function App() {
                   <Wand2 size={16} /> Build together
                 </span>
                 <div className="panel-title-actions">
-                  <button
-                    type="button"
-                    className="toggle-preview-panel-badge-btn"
-                    title={showPreviewPanel ? 'Click to hide Preview panel' : 'Click to show Preview panel'}
-                    aria-label={showPreviewPanel ? 'Click to hide Preview panel' : 'Click to show Preview panel'}
-                    onClick={() => setShowPreviewPanel(v => !v)}>
-                    {showPreviewPanel ? (
-                      <>
-                        <span>Hide Preview</span>
-                        <ChevronRight size={13} />
-                      </>
-                    ) : (
-                      <>
-                        <ChevronLeft size={13} />
-                        <span>Show Preview</span>
-                      </>
-                    )}
-                  </button>
+                  {!showPreviewPanel && (
+                    <button
+                      type="button"
+                      className="toggle-preview-panel-badge-btn"
+                      title="Click to show Preview panel"
+                      aria-label="Click to show Preview panel"
+                      onClick={() => setShowPreviewPanel(true)}>
+                      <ChevronLeft size={13} />
+                      <span>Show Preview</span>
+                    </button>
+                  )}
                   <span className="tiny-label">AI ASSISTANT</span>
                 </div>
               </div>
@@ -1271,7 +1354,7 @@ export default function App() {
                         ['documents', BookOpen, 'Docs'],
                         ['files', Files, 'Files'],
                         ['recovery', Archive, 'Recovery'],
-                        ...(isSuperAdmin ? [['admin-dashboard', Shield, 'Super Admin']] : []),
+                        ['admin-dashboard', Shield, 'Super Admin'],
                       ].map(([key, Icon, label]) => (
                         <button
                           role="tab"
@@ -1704,11 +1787,9 @@ export default function App() {
               )}
               {tab === 'admin-dashboard' && (
                 <AdminDashboard
-                  onClose={() => setTab('preview')}
-                  onOpenProject={(projId) => {
-                    navigate(projId);
-                    setTab('preview');
-                  }}
+                  onClose={() => handleReturnToAppBuilder()}
+                  onOpenProject={(projId) => handleReturnToAppBuilder(projId)}
+                  projects={projects}
                 />
               )}
             </section>
@@ -2221,10 +2302,24 @@ export default function App() {
               await request(`/projects/${id}/rag/config`, { enabled: nextEnabled });
               setNotice(`Codebase RAG pruning is now ${nextEnabled ? 'ACTIVE (-71% tokens)' : 'DISABLED'}.`);
             });
+          } else if (actionId === 'open-agent-builder') {
+            setShowAgentBuilder(true);
+            setShowAdminView(false);
           } else if (actionId === 'open-settings') {
             setModal('global-settings');
           } else if (actionId === 'open-admin') {
-            setTab('admin-dashboard');
+            if (!isSuperAdmin) {
+              setNotice('Access restricted: Super admin privileges required. Redirected to your workspace.');
+              setShowAdminView(false);
+              setTab('preview');
+              if (projects.length > 0 && !id) {
+                setId(projects[0].id);
+              }
+            } else {
+              setShowAdminView(true);
+              setTab('admin-dashboard');
+              setShowPreviewPanel(true);
+            }
           } else if (actionId === 'download-zip') {
             if (project) download(project);
           }
@@ -2235,9 +2330,19 @@ export default function App() {
       {/* User / Google Sign-in Modal */}
       <UserAuthModal
         isOpen={authModalOpen}
-        onClose={() => setAuthModalOpen(false)}
+        onClose={() => {
+          setAuthModalOpen(false);
+          setPostLoginAction(null);
+        }}
         onOpenAdminDashboard={() => setShowAdminView(true)}
         onLoginSuccess={(isSuper) => {
+          if (postLoginAction === 'agent-builder') {
+            setShowAgentBuilder(true);
+            setShowAdminView(false);
+            setPostLoginAction(null);
+            setNotice('Welcome! Switched to Agent Studio.');
+            return;
+          }
           if (isSuper) {
             setShowAdminView(true);
             setNotice('Welcome back, Super Admin. Opened Platform Dashboard.');

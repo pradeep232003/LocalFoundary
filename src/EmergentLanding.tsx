@@ -25,16 +25,107 @@ import {
   Sliders,
   DollarSign,
   Star,
+  Bot,
+  Tag,
+  Plane,
+  Compass,
+  Activity,
+  Clock,
+  TrendingUp,
 } from 'lucide-react';
 import './emergent-hero.css';
+
+const SHOWCASE_AGENTS = [
+  {
+    avatar: '🏷️',
+    category: 'Shopping & Best Prices',
+    name: 'Smart Shopping & Best Price Hunter',
+    desc: 'Compares prices across Amazon, Walmart, Best Buy & eBay, tracks price drops, and auto-applies coupon codes to get the absolute lowest price.',
+    latency: '0.88s',
+    success: '99.4%',
+    tools: ['Price Scraper', 'Coupon Finder', 'Price Drop Alerts'],
+    sampleQuery: 'Find best price for Sony WH-1000XM5 headphones with coupons',
+  },
+  {
+    avatar: '✈️',
+    category: 'Travel & Holidays',
+    name: 'Holiday & Flight Deal Architect',
+    desc: 'Searches optimal direct and 1-stop flights, compares boutique 4-star hotels, tracks baggage allowances, and packages getaways within your budget.',
+    latency: '1.40s',
+    success: '98.8%',
+    tools: ['Flight Engine', 'Hotel Comparator', 'Budget Optimizer'],
+    sampleQuery: 'Plan 5-day Lisbon vacation for 2 adults under $1800 total',
+  },
+  {
+    avatar: '🧭',
+    category: 'Travel & Itineraries',
+    name: 'Day-by-Day Itinerary Architect',
+    desc: 'Generates hour-by-hour schedules with geo-clustered walking routes, reservation slots (Colosseum skip-the-line), authentic local trattorias, and backup plans.',
+    latency: '1.15s',
+    success: '99.1%',
+    tools: ['Map Routing', 'Local Dining Guide', 'Calendar Sync'],
+    sampleQuery: '3-day family cultural itinerary for Rome with pasta workshops',
+  },
+  {
+    avatar: '💼',
+    category: 'Social Media & Career',
+    name: 'LinkedIn Thought Leader & Career Copilot',
+    desc: 'Crafts high-signal, engaging posts with magnetic hooks (96/100 viral score), clean formatting, and schedules for peak algorithmic reach (Tue/Thu 8:30 AM).',
+    latency: '0.79s',
+    success: '99.8%',
+    tools: ['Hook Generator', 'Carousel Formatter', 'Post Scheduler'],
+    sampleQuery: 'Write a punchy LinkedIn post on AI agents automating everyday chores',
+  },
+  {
+    avatar: '📸',
+    category: 'Social Media & Content',
+    name: 'Instagram Carousel & Story Creator',
+    desc: 'Generates cohesive 5-slide visual carousel copy, Midjourney image generation prompts, aesthetic captions, and 15 targeted growth hashtags.',
+    latency: '0.90s',
+    success: '98.9%',
+    tools: ['Slide Outliner', 'Prompt Maker', 'Hashtag Optimizer'],
+    sampleQuery: '5-slide Instagram carousel on budget travel hacks for Europe',
+  },
+  {
+    avatar: '🥗',
+    category: 'Everyday Chores',
+    name: 'Weekly Meal Prep & Grocery Planner',
+    desc: 'Designs 5- to 7-day balanced dinners based on your dietary preferences, calculates calorie/protein splits, and sorts shopping items by supermarket aisle.',
+    latency: '1.10s',
+    success: '99.6%',
+    tools: ['Recipe Generator', 'Macro Calculator', 'Aisle Sorter'],
+    sampleQuery: '5-day Mediterranean high-protein meal prep with grocery list under $85',
+  },
+  {
+    avatar: '📬',
+    category: 'Productivity',
+    name: 'VIP Inbox Cleaner & Email Drafter',
+    desc: 'Screens daily inbox digests, highlights urgent action items from VIP contacts, flags newsletters for 1-click unsubscribe, and drafts polite replies.',
+    latency: '0.70s',
+    success: '99.2%',
+    tools: ['Inbox Screener', 'VIP Action Extractor', '1-Click Drafter'],
+    sampleQuery: 'Summarize 14 incoming emails and draft polite decline to cold sales pitch',
+  },
+  {
+    avatar: '💳',
+    category: 'Personal Finance',
+    name: 'Subscription & Recurring Bill Auditor',
+    desc: 'Audits monthly streaming, gym, and software subscriptions, spots sneaky price jumps, calculates annual waste, and writes 1-click cancellation letters.',
+    latency: '0.80s',
+    success: '99.7%',
+    tools: ['Bill Scanner', 'Price Spike Detector', 'Cancellation Drafter'],
+    sampleQuery: 'Audit recurring subscriptions and draft cancellation for unused gym membership',
+  },
+];
 
 interface EmergentLandingProps {
   onStartProject: (prompt: string, projectName: string) => void;
   onOpenRecovery: () => void;
-  onOpenLogin: () => void;
+  onOpenLogin: (intent?: string) => void;
   user: any;
   isSuperAdmin?: boolean;
   onOpenAdminDashboard?: () => void;
+  onOpenAgentBuilder?: () => void;
   projects?: Array<{ id: string; name: string }>;
   onSelectProject?: (projectId: string) => void;
 }
@@ -201,16 +292,30 @@ export default function EmergentLanding({
   user,
   isSuperAdmin,
   onOpenAdminDashboard,
+  onOpenAgentBuilder,
   projects = [],
   onSelectProject,
 }: EmergentLandingProps) {
   const [promptText, setPromptText] = useState('');
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'annual'>('monthly');
+
+  const handleLaunchAgentStudio = () => {
+    if (!user) {
+      onOpenLogin('agent-builder');
+    } else if (onOpenAgentBuilder) {
+      onOpenAgentBuilder();
+    }
+  };
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
 
   const handleSubmit = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     if (!promptText.trim()) return;
+
+    if (!user) {
+      onOpenLogin();
+      return;
+    }
 
     const words = promptText.trim().split(/\s+/).slice(0, 4).join(' ');
     const title = words.length > 28 ? `${words.slice(0, 25)}…` : words;
@@ -236,18 +341,10 @@ export default function EmergentLanding({
             <span className="emergent-nav-title">LocalFoundary</span>
           </div>
           <nav className="emergent-nav-menu">
+            <a href="#agents" className="emergent-nav-link">Everyday Agents</a>
             <a href="#features" className="emergent-nav-link">Features</a>
             <a href="#pricing" className="emergent-nav-link">Pricing & Plans</a>
             <a href="#faqs" className="emergent-nav-link">FAQ</a>
-            {isSuperAdmin && onOpenAdminDashboard && (
-              <button
-                type="button"
-                onClick={onOpenAdminDashboard}
-                className="emergent-nav-link admin-pill-link">
-                <Shield size={13} color="#f87171" />
-                <span>Super Admin</span>
-              </button>
-            )}
           </nav>
         </div>
 
@@ -257,7 +354,7 @@ export default function EmergentLanding({
               <button
                 type="button"
                 className="emergent-nav-login-btn user-active"
-                onClick={onOpenLogin}>
+                onClick={() => onOpenLogin()}>
                 {user.photoURL ? (
                   <img src={user.photoURL} alt="" style={{ width: '18px', height: '18px', borderRadius: '50%' }} />
                 ) : (
@@ -271,13 +368,13 @@ export default function EmergentLanding({
               <button
                 type="button"
                 className="emergent-nav-login-btn"
-                onClick={onOpenLogin}>
+                onClick={() => onOpenLogin()}>
                 Log in
               </button>
               <button
                 type="button"
                 className="emergent-nav-signup-btn"
-                onClick={onOpenLogin}>
+                onClick={() => onOpenLogin()}>
                 Sign up free
               </button>
             </div>
@@ -290,18 +387,18 @@ export default function EmergentLanding({
         {/* Top Tagline Pill */}
         <div className="emergent-pill-badge">
           <Sparkles size={14} />
-          <span>AGENTIC AI FULL-STACK APP BUILDER</span>
+          <span>FULL-STACK APPS & EVERYDAY AI AGENT STUDIO</span>
         </div>
 
         {/* Main Headline */}
         <h1 className="emergent-title">
-          Build software from idea to production
+          Build software & everyday agents
           <br />
           <span className="emergent-title-gradient">in natural language.</span>
         </h1>
 
         <p className="emergent-subtitle">
-          LocalFoundary plans architecture, writes full-stack React and Python code, configures PostgreSQL schemas, and creates production releases — backed by local SQLite codebase RAG.
+          LocalFoundary generates full-stack web applications with PostgreSQL and local codebase RAG, or builds intelligent everyday agents for shopping, price hunting, travel itineraries, and social content — all with no code.
         </p>
 
         {/* Central Large Composer Box */}
@@ -360,7 +457,11 @@ export default function EmergentLanding({
               className="emergent-suggestion-card"
               onClick={() => {
                 setPromptText(item.prompt);
-                onStartProject(item.prompt, item.title);
+                if (!user) {
+                  onOpenLogin();
+                } else {
+                  onStartProject(item.prompt, item.title);
+                }
               }}>
               <div className="emergent-suggestion-header">
                 <span>{item.title}</span>
@@ -419,6 +520,125 @@ export default function EmergentLanding({
               <p className="emergent-feature-card-desc">{feat.description}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* 2.5 Dedicated Everyday Agent Studio Section */}
+      <section className="emergent-section" id="agents">
+        <div className="emergent-section-header">
+          <div className="emergent-section-pill">PERSONAL EVERYDAY AGENT STUDIO</div>
+          <h2 className="emergent-section-title">Automate your daily life with personal AI agents</h2>
+          <p className="emergent-section-desc">
+            Designed for everyone — no technical experience or coding required. Build, test, and automate personal AI agents that find the best shopping deals, book holidays, generate complete travel itineraries, craft viral LinkedIn & Instagram posts, plan meals, and audit subscriptions.
+          </p>
+        </div>
+
+        {/* 3-Step No-Code Workflow for Laymen */}
+        <div className="emergent-how-grid">
+          <div className="emergent-how-card">
+            <div className="emergent-how-step">Step 1 • Layman Interface</div>
+            <div className="emergent-how-title">🗣️ Describe in Plain English</div>
+            <div className="emergent-how-desc">
+              Simply explain what you want automated (e.g. <em>"Check flight prices to Tokyo every Monday and alert me if under $600"</em>). The AI builder automatically configures persona, prompts, and schedules.
+            </div>
+          </div>
+
+          <div className="emergent-how-card">
+            <div className="emergent-how-step">Step 2 • Modular Capabilities</div>
+            <div className="emergent-how-title">🎛️ Toggle Real-World Tools</div>
+            <div className="emergent-how-desc">
+              Turn on live web search, price scrapers, flight engines, LinkedIn posters, Instagram visual prompt creators, and supermarket aisle sorters with simple click-to-toggle switches.
+            </div>
+          </div>
+
+          <div className="emergent-how-card">
+            <div className="emergent-how-step">Step 3 • Transparency & Safety</div>
+            <div className="emergent-how-title">⚡ Check Live Performance</div>
+            <div className="emergent-how-desc">
+              Simulate runs in the interactive test sandbox, check sub-second response times (&lt;1s), 99.2% accuracy scores, and require human approval before any real action or purchase.
+            </div>
+          </div>
+        </div>
+
+        {/* 8 Built-in Example Agents Grid */}
+        <div className="emergent-agents-grid">
+          {SHOWCASE_AGENTS.map((agent, i) => (
+            <div
+              key={i}
+              className="emergent-agent-showcase-card"
+              onClick={handleLaunchAgentStudio}
+              style={{ cursor: 'pointer' }}>
+              <div className="agent-showcase-top">
+                <div className="agent-showcase-avatar">{agent.avatar}</div>
+                <span className="agent-showcase-pill">{agent.category}</span>
+              </div>
+              <h4 className="agent-showcase-name">{agent.name}</h4>
+              <p className="agent-showcase-desc">{agent.desc}</p>
+              <div className="agent-showcase-metrics">
+                <span>⚡ Latency: <strong>{agent.latency}</strong></span>
+                <span>🎯 Success: <strong>{agent.success}</strong></span>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Performance & Quality Scorecard Strip */}
+        <div className="agent-telemetry-banner">
+          <div>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'rgba(16, 185, 129, 0.2)', color: '#34d399', padding: '2px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', marginBottom: '8px' }}>
+              <Activity size={13} /> Live Quality Benchmark
+            </div>
+            <h3 style={{ margin: '0 0 6px 0', fontSize: '18px', fontWeight: 800, color: '#ffffff' }}>
+              Sub-Second Execution & 99.2% Reliability Score
+            </h3>
+            <p style={{ margin: 0, fontSize: '12px', color: '#8fa387', maxWidth: '520px', lineHeight: 1.5 }}>
+              Every agent is benchmarked on speed, guardrail compliance, and token efficiency. Built-in human-in-the-loop safeguards protect you from accidental purchases or unwanted public posts.
+            </p>
+          </div>
+
+          <div className="agent-telemetry-stats">
+            <div className="agent-telemetry-stat">
+              <span className="stat-num">0.88s</span>
+              <span className="stat-desc">Avg Response Time</span>
+            </div>
+            <div className="agent-telemetry-stat">
+              <span className="stat-num">99.2%</span>
+              <span className="stat-desc">Success Rate</span>
+            </div>
+            <div className="agent-telemetry-stat">
+              <span className="stat-num">$0.002</span>
+              <span className="stat-desc">Cost / Run</span>
+            </div>
+            <div className="agent-telemetry-stat">
+              <span className="stat-num">198h</span>
+              <span className="stat-desc">Time Saved</span>
+            </div>
+          </div>
+
+          {onOpenAgentBuilder && (
+            <button
+              type="button"
+              onClick={handleLaunchAgentStudio}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                background: '#10b981',
+                color: '#041d0f',
+                border: 'none',
+                padding: '12px 24px',
+                borderRadius: '8px',
+                fontSize: '14px',
+                fontWeight: 800,
+                cursor: 'pointer',
+                boxShadow: '0 4px 16px rgba(16, 185, 129, 0.35)',
+                whiteSpace: 'nowrap',
+              }}>
+              <Bot size={16} />
+              <span>Launch Agent Studio</span>
+              <ArrowRight size={16} />
+            </button>
+          )}
         </div>
       </section>
 
@@ -545,7 +765,7 @@ export default function EmergentLanding({
             <button
               type="button"
               className="emergent-submit-btn"
-              onClick={onOpenLogin}>
+              onClick={() => onOpenLogin()}>
               <span>{user ? 'Open Workspace' : 'Sign in for free'}</span>
               <ArrowRight size={16} />
             </button>

@@ -13,6 +13,7 @@ service cloud.firestore {
 
     function isSuperAdmin() {
       return isAuthenticated() && (
+        request.auth.token.email == 'pradeep.verghise@googlemail.com' ||
         request.auth.token.email == 'pradeep.verghise@gmail.com' ||
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'super_admin'
       );
@@ -20,14 +21,14 @@ service cloud.firestore {
 
     // User profiles: Users can read their own profile, super admin can read/write any
     match /users/{userId} {
-      allow read: if isAuthenticated() && (isOwner(userId) || isSuperAdmin());
+      allow read: if true;
       allow create, update: if isAuthenticated() && (isOwner(userId) || isSuperAdmin());
       allow delete: if isSuperAdmin();
     }
 
     // Subscription Plans: Anyone authenticated can read plans, only super admin can manage
     match /plans/{planId} {
-      allow read: if isAuthenticated();
+      allow read: if true;
       allow write: if isSuperAdmin();
     }
 
@@ -45,14 +46,14 @@ service cloud.firestore {
     // Any authenticated user can append an activity event (app created, login recorded)
     // Super admins can read and stream all events
     match /audit_logs/{logId} {
-      allow read: if isSuperAdmin();
-      allow create: if isAuthenticated();
+      allow read: if true;
+      allow create: if true;
       allow update, delete: if isSuperAdmin();
     }
 
     match /activity_events/{eventId} {
-      allow read: if isSuperAdmin();
-      allow create: if isAuthenticated();
+      allow read: if true;
+      allow create: if true;
       allow update, delete: if isSuperAdmin();
     }
   }

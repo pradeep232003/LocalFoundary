@@ -4,6 +4,7 @@ import App from './App.jsx';
 import { AuthProvider } from './AuthContext';
 import './style.css';
 import './admin.css';
+import './agent-builder.css';
 
 createRoot(document.getElementById('root')).render(
   <AuthProvider>

@@ -349,3 +349,38 @@
 .google-signin-btn:hover {
   background: #f3f4f6;
 }
+
+.admin-stat-card.clickable {
+  cursor: pointer;
+  user-select: none;
+}
+
+.admin-stat-card.clickable:hover {
+  border-color: #10b981;
+  background: #142219;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.12);
+}
+
+.stat-delta-clickable {
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  color: #34d399;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: fit-content;
+}
+
+.stat-delta-clickable:hover {
+  background: rgba(16, 185, 129, 0.25);
+  border-color: #10b981;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
+}

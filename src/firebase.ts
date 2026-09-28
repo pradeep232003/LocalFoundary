@@ -31,11 +31,16 @@ googleProvider.setCustomParameters({
   prompt: 'select_account',
 });
 
-export const SUPER_ADMIN_EMAIL = 'pradeep.verghise@gmail.com';
+export const SUPER_ADMIN_EMAIL = 'pradeep.verghise@googlemail.com';
+export const SUPER_ADMIN_EMAILS = [
+  'pradeep.verghise@googlemail.com',
+  'pradeep.verghise@gmail.com',
+];
 
 export function isUserSuperAdmin(email?: string | null, role?: string | null): boolean {
   if (!email) return false;
-  if (email.toLowerCase() === SUPER_ADMIN_EMAIL.toLowerCase()) return true;
+  const normalized = email.toLowerCase().trim();
+  if (SUPER_ADMIN_EMAILS.some(e => e.toLowerCase() === normalized)) return true;
   return role === 'super_admin';
 }
 
