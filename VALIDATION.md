@@ -6,7 +6,7 @@ The earlier release's validation totals are not evidence for this rewrite.
 
 ## Checks run on this revision
 
-- Python 3.12 regression suite: **299 passed, 99 skipped**. The available storage
+- Python 3.12 regression suite: **300 passed, 100 skipped**. The available storage
   tests use a file-backed SQLite test double; the product uses PostgreSQL.
 - `npm test`: **2 passed**, covering workspace-token forwarding, binary requests,
   and rejecting unauthenticated responses/downloads.

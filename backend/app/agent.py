@@ -62,11 +62,12 @@ def build(project_id, run_id, provider, cancelled, limits, session=None):
     while history and history[0]['role'] != 'user':
         history.pop(0)
     history = [{'role': r['role'], 'content': r['content'][:16000]} for r in history]
+    retrieval_query = next((row['content'] for row in reversed(history) if row['role'] == 'user'), '')
     context = memory.context(project_id)
     if context and history:
         history[0]['content'] = context + '\nCurrent conversation:\n' + history[0]['content']
-    if history and 'history' not in session:
-        retrieved = codebase_rag.context(project_id, history[-1]['content'])
+    if retrieval_query and 'history' not in session:
+        retrieved = codebase_rag.context(project_id, retrieval_query)
         if retrieved:
             history[-1]['content'] += '\n\n' + retrieved
     history = session.setdefault('history', history)

@@ -1,9 +1,11 @@
 """Regression cases for the reviewed prototype defects; no external services."""
 import sqlite3
+import threading
 
 from fastapi.testclient import TestClient
 
-from app import codebase_rag, config, db, files, main, sandbox
+from app import agent, codebase_rag, config, db, files, main, memory, providers, sandbox, usage
+from conftest import make_run
 
 
 def create(client):
@@ -94,3 +96,19 @@ def test_source_search_rejects_unsafe_input(client):
     response = client.post(f'/api/projects/{pid}/rag/search', json={'query': '\"; DROP TABLE source; --'})
     assert response.status_code == 200
     assert client.get(f'/api/projects/{pid}/rag/status').json()['indexed_files'] > 0
+
+
+def test_coding_retrieval_uses_prompt_not_expanded_project_memory(client, monkeypatch):
+    pid = create(client)
+    prompt = 'Find the notes endpoint'
+    db.message(pid, 'user', prompt)
+    memory.save(pid, {'requirements': 'r' * 6000, 'architecture': 'a' * 6000,
+                      'decisions': 'd' * 6000}, 0)
+    queries = []
+    monkeypatch.setattr(codebase_rag, 'context', lambda project_id, query: queries.append(query) or '')
+    monkeypatch.setattr(providers, 'ask', lambda *args, **kwargs: ([], ['Inspected'], [],
+                        {'input_tokens': 1, 'output_tokens': 1}, False))
+    result, _ = agent.build(pid, make_run(pid), 'local', threading.Event(),
+                            usage.Limits(0, 100000, 10000, 0, 0))
+    assert result == 'Inspected'
+    assert queries == [prompt]

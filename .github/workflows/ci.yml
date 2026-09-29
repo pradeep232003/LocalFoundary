@@ -14,7 +14,7 @@ jobs:
           POSTGRES_DB: foundry_test
         ports: ['5432:5432']
         options: >-
-          --health-cmd 'pg_isready -U foundry_test'
+          --health-cmd pg_isready
           --health-interval 5s --health-timeout 5s --health-retries 10
     steps:
       - uses: actions/checkout@v4
@@ -28,7 +28,7 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
       - run: pip install -r backend/requirements.txt ruff
       - run: npm --prefix frontend ci
-      - run: npm test && npm run build
+      - run: npm test && npm run build && npm --prefix frontend run smoke
       - run: ruff check backend scripts tests
       - run: python -m pytest tests -q
         env:
