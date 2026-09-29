@@ -1,0 +1,15 @@
+# Lint configuration. Run: ruff check .
+line-length = 140
+target-version = "py312"
+
+[lint]
+select = ["F", "E9", "B904"]
+
+[lint.per-file-ignores]
+# Importing a fixture is how pytest shares it across modules; the name is then
+# shadowed by the test parameter that requests it. Both reads as dead code to a
+# linter and neither is.
+"tests/test_release_operations.py" = ["F401", "F811"]
+# Fixture return values are sometimes bound only to document what the fixture
+# produced for the assertions that follow.
+"tests/test_backups.py" = ["F841"]

@@ -1,0 +1,9 @@
+{
+  "name": "foundry-generated-app",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {"dev": "vite --host 0.0.0.0 --configLoader runner", "build": "vite build"},
+  "dependencies": {"react": "^19.1.0", "react-dom": "^19.1.0"},
+  "devDependencies": {"vite": "^6.3.5"}
+}

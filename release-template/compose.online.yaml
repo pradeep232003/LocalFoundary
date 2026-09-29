@@ -1,0 +1,28 @@
+# Only the restricted proxy joins the external network. The API stays private.
+services:
+  api:
+    depends_on:
+      egress: {condition: service_started}
+  worker:
+    depends_on:
+      egress: {condition: service_started}
+  egress:
+    image: ${RELEASE_NAME}-egress:${RELEASE_TAG:-release}
+    build: ./egress
+    pull_policy: never
+    user: '1000:1000'
+    restart: unless-stopped
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    pids_limit: 80
+    mem_limit: 128m
+    cpus: 1
+    tmpfs: ['/tmp:rw,noexec,nosuid,size=16m']
+    logging: {driver: json-file, options: {max-size: 5m, max-file: '2'}}
+    environment:
+      CONNECT_ALLOWED_HOSTS: ${CONNECT_ALLOWED_HOSTS:-}
+      PYTHONDONTWRITEBYTECODE: '1'
+    networks: [private, outbound]
+networks:
+  outbound: {}

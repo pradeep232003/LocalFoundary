@@ -1,0 +1,15 @@
+route:
+  receiver: foundry-operations
+  group_by: [alertname]
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 4h
+receivers:
+  - name: foundry-operations
+    webhook_configs:
+      - url: http://api:8000/ops/alerts
+        send_resolved: true
+        max_alerts: 50
+        http_config:
+          authorization:
+            credentials_file: /etc/foundry/ops-token

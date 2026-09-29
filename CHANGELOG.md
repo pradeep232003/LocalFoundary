@@ -1,3 +1,17 @@
+# v0.11.0 — 2026-09-29
+
+- Restored the persistent Python/PostgreSQL engine, templates, Accounts kit,
+  Docker sandbox, native mobile pipeline, recovery, GitHub synchronization,
+  macOS packager and Windows 11 WSL2 launcher missing from the prototype.
+- Protected every API with workspace-token authentication and strict origins.
+  Removed fabricated email login and the cloud-admin UI; hardened legacy Firestore rules.
+- Connected Agent Studio to real coding, document and file-planning jobs.
+  Removed fabricated retail verification, activity, benchmarks and routing.
+- Replaced pseudo-SQLite vector files with persistent SQLite FTS5 source retrieval,
+  authenticated database downloads and bounded coding context.
+- Moved the React workbench into `frontend/`, added cross-platform npm launchers,
+  regression cases and CI with a PostgreSQL service. Updated setup and migration notes.
+
 # v0.10.1 — 2026-09-25
 
 - Fixed AAB builds selecting the iOS platform. Both Android targets now generate

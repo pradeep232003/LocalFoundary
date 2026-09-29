@@ -1,0 +1,42 @@
+# Internal monitoring only. No dashboard port is exposed to the Internet.
+services:
+  prometheus:
+    image: prom/prometheus:v3.14.0
+    pull_policy: never
+    user: '65534:65534'
+    restart: unless-stopped
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    pids_limit: 100
+    mem_limit: 512m
+    cpus: 1
+    networks: [private]
+    logging: {driver: json-file, options: {max-size: 5m, max-file: '2'}}
+    command: ['--config.file=/etc/prometheus/prometheus.yml', '--storage.tsdb.path=/prometheus', '--storage.tsdb.retention.time=15d', '--storage.tsdb.retention.size=2GB']
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./monitoring/rules.yml:/etc/prometheus/rules.yml:ro
+      - ./.secrets/ops-token:/etc/foundry/ops-token:ro
+      - prometheus_data:/prometheus
+  alertmanager:
+    image: prom/alertmanager:v0.34.1
+    pull_policy: never
+    user: '65534:65534'
+    restart: unless-stopped
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    pids_limit: 100
+    mem_limit: 128m
+    cpus: 1
+    networks: [private]
+    logging: {driver: json-file, options: {max-size: 5m, max-file: '2'}}
+    command: ['--config.file=/etc/alertmanager/alertmanager.yml', '--storage.path=/alertmanager', '--cluster.listen-address=']
+    volumes:
+      - ./monitoring/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+      - ./.secrets/ops-token:/etc/foundry/ops-token:ro
+      - alertmanager_data:/alertmanager
+volumes:
+  prometheus_data: {}
+  alertmanager_data: {}

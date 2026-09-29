@@ -1,4 +1,4 @@
-# Local Foundry · v0.10.1
+# Local Foundry · v0.11.0
 
 A personal app builder for macOS and Windows 11 (WSL2): describe an app in chat, edit it with Claude,
 OpenAI, or a local OpenAI-compatible model, preview it in Docker, and save the
@@ -8,6 +8,64 @@ app packager. The builder and generated apps use React, FastAPI, and PostgreSQL.
 
 This is an independent starter implementation of that workflow. It does not use
 Emergent's code or branding.
+
+## v0.11.0 — real workflows restored
+
+This release replaces the September GitHub prototype's simulated Express API with
+the persistent FastAPI/PostgreSQL engine and keeps its React workbench. Projects,
+versions, runs, document search, approved file plans, Docker previews, validation,
+encrypted recovery, GitHub saves and native build jobs now use their actual implementations.
+Operations fail or report missing prerequisites when they cannot run.
+
+The builder is a **single-owner local application**. Every API call requires the
+workspace token, the server binds to loopback, and origins are restricted. Open the
+private launch link or enter `BUILDER_TOKEN` in **Unlock workspace**. Invented email
+sessions and client-controlled admin roles are removed. Application authentication,
+roles, payments and integrations remain in the generated **Accounts & billing** starter.
+
+Agent Studio runs coding, local document research and approved file planning.
+Shopping/travel/inbox/finance connectors are unavailable; it no longer fabricates
+prices, account activity, benchmark results or successful tool execution. Source
+context uses real **SQLite FTS5 keyword search**, not model embeddings. Displayed
+token counts are estimates; actual usage is recorded from model responses.
+
+### Upgrade from the September Express prototype
+
+1. Export any project source you need **before stopping the old server**. Its in-memory
+   projects were never persisted; this upgrade cannot recover data lost by a prior restart.
+2. Keep existing private settings and data from earlier Python releases. They are not
+   copied into Git or overwritten by this upgrade. Do not copy prototype `data/*.db`
+   files: they were not valid SQLite databases.
+3. Run setup below (or `Windows.ps1 Install`) to install the restored engine and cache
+   its runtime images. Start with `npm start` or `scripts/start.sh`.
+4. Re-run validation before publishing projects. Native builds still require installed
+   Android tools or macOS/Xcode and signing credentials. See [MOBILE.md](MOBILE.md).
+
+The old Firebase-backed admin UI is removed and no Firebase connection is made by
+this builder. Hardened `firestore.rules` is included for the former deployment, but
+**has not been deployed**. Existing deployments must apply it and review previously
+editable profiles. Admin authority must come from a trusted custom claim, never
+an email address or a profile's `role` field.
+
+### Repository commands
+
+```sh
+npm --prefix frontend ci
+npm run build
+npm test
+npm --prefix frontend run smoke
+# With Python dependencies installed:
+PYTHONPATH=backend python -m pytest tests -q
+```
+
+For frontend development, run the backend with `FOUNDRY_DEV_UI=1` and run `npm run dev`.
+Vite binds to `127.0.0.1:5173` and proxies `/api` to `127.0.0.1:8765`; unlock with the
+same workspace token. Production runs the built UI and API on one origin.
+
+Do not expose the builder or its Docker socket as a public Railway service. Deploy
+**generated applications** using the release's configuration and platform-specific
+setup. A shared public builder would need a separate tenant-isolated execution and
+authorization architecture. See [VALIDATION.md](VALIDATION.md) for current evidence.
 
 ## New in v0.10.1 — corrected mobile release workflows
 

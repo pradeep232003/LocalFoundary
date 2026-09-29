@@ -20,3 +20,9 @@ mobile-build/
 *.mobileprovision
 *.p8
 *.p12
+
+# Private runtime outputs
+data/
+*.lfr
+*.partial
+acceptance-results/

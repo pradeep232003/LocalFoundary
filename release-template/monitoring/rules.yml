@@ -1,0 +1,23 @@
+groups:
+  - name: foundry
+    rules:
+      - alert: AppUnavailable
+        expr: up{job="foundry"} == 0
+        for: 2m
+        labels: {severity: critical}
+        annotations: {summary: 'The application metrics endpoint is unavailable.'}
+      - alert: AppServerErrors
+        expr: sum(increase(foundry_http_requests_total{status=~"5.."}[5m])) > 5
+        for: 2m
+        labels: {severity: warning}
+        annotations: {summary: 'More than five server errors occurred in five minutes.'}
+      - alert: DeliveryWorkerMissing
+        expr: time() - foundry_worker_heartbeat_seconds > 120
+        for: 2m
+        labels: {severity: critical}
+        annotations: {summary: 'The delivery worker heartbeat is stale.'}
+      - alert: FailedDeliveries
+        expr: foundry_delivery_queue{status="dead"} > 0
+        for: 5m
+        labels: {severity: warning}
+        annotations: {summary: 'Inspect failed deliveries in the Operations dashboard.'}
