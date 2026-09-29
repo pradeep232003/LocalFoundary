@@ -1,0 +1,78 @@
+{
+  "note": "Graded build prompts for scripts/benchmark.py. Tiers run in order and get harder. Each prompt is a single build request against a fresh project, written the way someone would actually type it, not tuned to make the model succeed. 'expect' lists what a human should look for when reviewing the finished app; the harness cannot judge these, so they are printed as a review checklist next to the machine result.",
+  "version": 1,
+  "cases": [
+    {
+      "id": "reading-list",
+      "tier": 1,
+      "profile": "starter",
+      "title": "Personal reading list",
+      "prompt": "Build a reading list. Each book has a title, author, and a status of want to read, reading, or finished. I want to add a book, change its status, and delete it. Show the list grouped by status with a count next to each group. Store everything in PostgreSQL with a migration, and add backend tests.",
+      "expect": [
+        "Adding a book persists across a page reload",
+        "Status can be changed without retyping the book",
+        "Counts match the number of rows in each group"
+      ]
+    },
+    {
+      "id": "habit-tracker",
+      "tier": 1,
+      "profile": "starter",
+      "title": "Daily habit tracker",
+      "prompt": "Build a habit tracker. I can create habits and tick each one off per day. Show the last 7 days as a grid with the habits down the side and the days across the top, and show the current streak for each habit. Store it in PostgreSQL with a migration, and add backend tests for the streak calculation.",
+      "expect": [
+        "Ticking a day persists and the grid reflects it",
+        "Streak resets correctly after a missed day",
+        "The grid is readable at phone width"
+      ]
+    },
+    {
+      "id": "client-tracker",
+      "tier": 2,
+      "profile": "accounts",
+      "title": "Client tracker with invoices",
+      "prompt": "Build a client tracker on top of the existing accounts app. Each signed-in user has their own clients, and each client has invoices with an amount, issue date, due date, and a paid or unpaid status. I want a client list showing their outstanding total, a page per client listing its invoices, and a way to mark an invoice paid. Only the owner may see or change their own clients and invoices. Add a migration and backend tests covering ownership. Keep every existing account, billing, role and operations screen working.",
+      "expect": [
+        "A second account cannot see the first account's clients",
+        "Outstanding total excludes paid invoices",
+        "Existing sign-in, roles and billing screens still work"
+      ]
+    },
+    {
+      "id": "csv-export",
+      "tier": 2,
+      "profile": "accounts",
+      "title": "Filtered list with CSV export",
+      "prompt": "Add a searchable, filterable table of the current user's notes, with a text search, a date range filter, and a button that downloads the filtered rows as a CSV. The CSV must contain only the signed-in user's own rows. Add backend tests that prove the export respects both the filter and record ownership.",
+      "expect": [
+        "The downloaded CSV matches what the filtered table shows",
+        "A second account's rows never appear in the export",
+        "Search and date filter combine rather than replace each other"
+      ]
+    },
+    {
+      "id": "booking",
+      "tier": 3,
+      "profile": "accounts",
+      "title": "Booking with availability rules",
+      "prompt": "Build a room booking feature. An admin defines rooms and their opening hours per weekday. A member books a room for a time slot. Two bookings for the same room must never overlap, and a booking outside the room's opening hours must be refused with a clear message. Show a day view per room. Enforce all of this on the server, not just in the interface. Add a migration and backend tests for the overlap and opening-hours rules, including two bookings submitted at the same time.",
+      "expect": [
+        "Concurrent identical bookings produce exactly one booking",
+        "The overlap rule is enforced in the API, not only the UI",
+        "Only an admin can change rooms or opening hours"
+      ]
+    },
+    {
+      "id": "threaded-comments",
+      "tier": 3,
+      "profile": "accounts",
+      "title": "Threaded comments with moderation",
+      "prompt": "Add comments to the notes. Comments can reply to other comments, nested up to three levels. An author can edit or delete their own comment; an admin can delete any comment. A deleted comment that has replies keeps its place in the thread and shows as removed. Add a migration and backend tests covering the nesting limit, the edit and delete permissions, and the removed-with-replies case.",
+      "expect": [
+        "A member cannot edit or delete another member's comment",
+        "Deleting a parent does not orphan or hide its replies",
+        "The nesting limit is enforced server-side"
+      ]
+    }
+  ]
+}

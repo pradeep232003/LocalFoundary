@@ -1,0 +1,3 @@
+export default function SettingsPanel({project,config,onOpenGlobalSettings}) {
+ return <section style={{padding:24}}><h2>Project settings</h2><p>{project.name} · {project.profile} template</p><p>Preview database and account settings are supplied by the local sandbox. They are isolated from provider API keys and host credentials.</p><p>Configure production secrets in the deployment environment using the exported release instructions. Do not put secrets in source files or chat prompts.</p><p>Workspace mode: {config?.offline_only?'Offline only':'Cloud providers allowed'}</p><button onClick={onOpenGlobalSettings}>Model and build settings</button></section>;
+}

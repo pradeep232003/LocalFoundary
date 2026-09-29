@@ -1,0 +1,16 @@
+{
+    email {$ACME_EMAIL}
+    admin off
+}
+{$APP_DOMAIN} {
+    header {
+        Strict-Transport-Security "max-age=31536000"
+        -Server
+    }
+    @internal path /ops /ops/* /metrics /docs /openapi.json
+    respond @internal 404
+    request_body {
+        max_size 64KB
+    }
+    reverse_proxy web:8080
+}

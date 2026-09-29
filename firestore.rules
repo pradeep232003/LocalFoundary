@@ -1,60 +1,49 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-
-    // Helper functions
-    function isAuthenticated() {
-      return request.auth != null;
+    function signedIn() { return request.auth != null; }
+    function owner(uid) { return signedIn() && request.auth.uid == uid; }
+    // Only the Admin SDK may grant this custom claim. Profile fields and email
+    // addresses never confer authority, including previously forged profiles.
+    function admin() { return signedIn() && request.auth.token.super_admin == true; }
+    match /users/{uid} {
+      allow read: if owner(uid) || admin();
+      allow create: if owner(uid)
+        && request.auth.token.email_verified == true
+        && request.resource.data.keys().hasOnly(['uid','email','displayName','photoURL','createdAt','updatedAt'])
+        && request.resource.data.keys().hasAll(['uid','email','displayName','photoURL','createdAt','updatedAt'])
+        && request.resource.data.uid == uid
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.displayName is string && request.resource.data.displayName.size() <= 100
+        && request.resource.data.photoURL is string && request.resource.data.photoURL.size() <= 2048
+        && request.resource.data.createdAt == request.time && request.resource.data.updatedAt == request.time;
+      allow update: if owner(uid)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['displayName','photoURL','updatedAt'])
+        && request.resource.data.displayName is string && request.resource.data.displayName.size() <= 100
+        && request.resource.data.photoURL is string && request.resource.data.photoURL.size() <= 2048
+        && request.resource.data.updatedAt == request.time;
+      // Roles, quotas, billing fields and deletion are server-admin operations.
+      allow delete: if false;
     }
-
-    function isOwner(userId) {
-      return isAuthenticated() && request.auth.uid == userId;
+    match /plans/{id} { allow read: if true; allow write: if admin(); }
+    match /tenants/{id} {
+      allow read: if admin() || (signedIn() && resource.data.ownerUid == request.auth.uid);
+      allow write: if admin();
     }
-
-    function isSuperAdmin() {
-      return isAuthenticated() && (
-        request.auth.token.email == 'pradeep.verghise@googlemail.com' ||
-        request.auth.token.email == 'pradeep.verghise@gmail.com' ||
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'super_admin'
-      );
+    match /audit_logs/{id} {
+      allow read: if admin();
+      allow write: if false; // Append from trusted server code only.
     }
-
-    // User profiles: Users can read their own profile, super admin can read/write any
-    match /users/{userId} {
-      allow read: if true;
-      allow create, update: if isAuthenticated() && (isOwner(userId) || isSuperAdmin());
-      allow delete: if isSuperAdmin();
-    }
-
-    // Subscription Plans: Anyone authenticated can read plans, only super admin can manage
-    match /plans/{planId} {
-      allow read: if true;
-      allow write: if isSuperAdmin();
-    }
-
-    // Tenants / Subscriptions: Super admin can read & write, tenant owner can read
-    match /tenants/{tenantId} {
-      allow read: if isAuthenticated() && (
-        isSuperAdmin() ||
-        resource.data.ownerUid == request.auth.uid ||
-        resource.data.ownerEmail == request.auth.token.email
-      );
-      allow write: if isSuperAdmin();
-    }
-
-    // System audit logs & Real-time platform activities:
-    // Any authenticated user can append an activity event (app created, login recorded)
-    // Super admins can read and stream all events
-    match /audit_logs/{logId} {
-      allow read: if true;
-      allow create: if true;
-      allow update, delete: if isSuperAdmin();
-    }
-
-    match /activity_events/{eventId} {
-      allow read: if true;
-      allow create: if true;
-      allow update, delete: if isSuperAdmin();
+    match /activity_events/{id} {
+      allow read: if admin() || (signedIn() && resource.data.userId == request.auth.uid);
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly(['userId','type','title','timestamp'])
+        && request.resource.data.keys().hasAll(['userId','type','title','timestamp'])
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.type in ['user_login','app_created','app_build']
+        && request.resource.data.title is string && request.resource.data.title.size() <= 200
+        && request.resource.data.timestamp == request.time;
+      allow update, delete: if false;
     }
   }
 }

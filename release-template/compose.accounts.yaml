@@ -1,0 +1,41 @@
+# This file is merged into compose.yaml by the trusted builder during export.
+services:
+  api:
+    environment: &account_environment
+      DATABASE_URL: postgresql+psycopg://app:${DATABASE_PASSWORD:?Set a generated password}@db:5432/app
+      PYTHONDONTWRITEBYTECODE: '1'
+      PYTHONUNBUFFERED: '1'
+      PYTHONPATH: /app
+      APP_ENV: ${APP_ENV:-preview}
+      PUBLIC_ORIGIN: ${PUBLIC_ORIGIN:-}
+      ALLOW_SIGNUP: ${ALLOW_SIGNUP:-false}
+      ENABLE_INTEGRATIONS: ${ENABLE_INTEGRATIONS:-false}
+      PAYMENT_MODE: ${PAYMENT_MODE:-off}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-}
+      PRODUCT_CATALOG: ${PRODUCT_CATALOG:-}
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      EMAIL_FROM: ${EMAIL_FROM:-}
+      OUTGOING_WEBHOOK_URL: ${OUTGOING_WEBHOOK_URL:-}
+      OUTGOING_WEBHOOK_SECRET: ${OUTGOING_WEBHOOK_SECRET:-}
+      APP_ENCRYPTION_KEY: ${APP_ENCRYPTION_KEY:?Run configure-release.py}
+      OPS_TOKEN: ${OPS_TOKEN:?Run configure-release.py}
+  worker:
+    image: ${RELEASE_NAME}-api:${RELEASE_TAG:-release}
+    pull_policy: never
+    user: '1000:1000'
+    restart: unless-stopped
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    pids_limit: 100
+    mem_limit: 512m
+    cpus: 1
+    init: true
+    tmpfs: ['/tmp:rw,noexec,nosuid,size=32m']
+    logging: {driver: json-file, options: {max-size: 5m, max-file: '2'}}
+    networks: [private]
+    environment: *account_environment
+    command: [python, -m, app.integrations]
+    depends_on:
+      migrate: {condition: service_completed_successfully}
