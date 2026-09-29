@@ -6,8 +6,13 @@ The earlier release's validation totals are not evidence for this rewrite.
 
 ## Checks run on this revision
 
-- Python 3.12 regression suite: **300 passed, 100 skipped**. The available storage
-  tests use a file-backed SQLite test double; the product uses PostgreSQL.
+- GitHub Actions on code commit `6b262fb9b120690eeb78334131bf5df7936fe242`:
+  **396 Python tests passed, 4 skipped**, using PostgreSQL 16 as well as the
+  SQLite test double. Both branch and pull-request checks passed. The four skips
+  are the two opt-in live Docker acceptance tests in both storage configurations.
+  [Verified CI run](https://github.com/pradeep232003/LocalFoundary/actions/runs/36548423394).
+- Local restricted-host Python 3.12 suite: **300 passed, 100 skipped**. Its storage
+  tests use a file-backed SQLite test double; PostgreSQL coverage comes from CI.
 - `npm test`: **2 passed**, covering workspace-token forwarding, binary requests,
   and rejecting unauthenticated responses/downloads.
 - `npm run build`: TypeScript check and Vite production build passed.
@@ -40,10 +45,11 @@ restricted host. Browser screenshots, CSS/layout and interactive browser accepta
 are therefore **not verified on this revision**. Historical screenshots in the
 repository are not current acceptance evidence.
 
-CI is configured with a PostgreSQL service to exercise the real database paths.
-Its status must be checked on the pull request. Run `scripts/acceptance.py` and the
-mobile/provider checklists on the target laptop before treating the release as accepted.
-No application was deployed and no APK, AAB or IPA was compiled here.
+CI passed the real database paths, frontend tests/build/render checks, Python lint
+and source archive verification. These are not a substitute for the opt-in live
+Docker gates. Run `scripts/acceptance.py` and the mobile/provider checklists on the
+target laptop before treating the release as accepted. No application was deployed
+and no APK, AAB or IPA was compiled here.
 
 The legacy Firestore rules were hardened in source, but have **not been deployed or
 run against a Firebase emulator**. The current builder removes the Firebase client
